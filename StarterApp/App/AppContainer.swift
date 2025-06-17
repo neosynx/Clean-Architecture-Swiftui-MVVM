@@ -42,7 +42,32 @@ class AppContainer {
         )
         self.loggerFactory = loggerFactory
         
-        self.networkService = NetworkServiceImpl(configuration: configuration, loggerFactory: loggerFactory)
+        // Configure network service based on environment
+        let networkConfig: NetworkConfiguration = {
+            switch env {
+            case .development:
+                return .default
+            case .staging:
+                return .default
+            case .production:
+                return NetworkConfiguration(
+                    timeout: 60.0,
+                    retryAttempts: 5,
+                    retryDelay: 2.0,
+                    maxConcurrentRequests: 15,
+                    enableCaching: true,
+                    cachePolicy: .returnCacheDataElseLoad,
+                    maxResponseSize: 100 * 1024 * 1024, // 100MB for production
+                    waitsForConnectivity: true
+                )
+            }
+        }()
+        
+        self.networkService = NetworkServiceImpl(
+            configuration: configuration,
+            loggerFactory: loggerFactory,
+            networkConfig: networkConfig
+        )
         self.analyticsService = AnalyticsServiceImpl(environment: env, loggerFactory: loggerFactory)
         
         // Log container initialization

@@ -73,8 +73,44 @@ final class WeatherRemoteService: RemoteServiceImpl<String, ForecastApiDTO> {
                 case .networkError:
                     logger.debug("      ➡️ networkError → networkUnavailable")
                     throw ServiceError.networkUnavailable
-                case .httpError(let statusCode):
+                case .httpError(let statusCode, _):
                     logger.debug("      ➡️ httpError(\(statusCode)) → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
+                case .timeout:
+                    logger.debug("      ➡️ timeout → networkUnavailable")
+                    throw ServiceError.networkUnavailable
+                case .cancelled:
+                    logger.debug("      ➡️ cancelled → networkUnavailable")
+                    throw ServiceError.networkUnavailable
+                case .unauthorized:
+                    logger.debug("      ➡️ unauthorized → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
+                case .forbidden:
+                    logger.debug("      ➡️ forbidden → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
+                case .notFound:
+                    logger.debug("      ➡️ notFound → notFound")
+                    throw ServiceError.notFound
+                case .serverError(let statusCode):
+                    logger.debug("      ➡️ serverError(\(statusCode)) → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
+                case .noInternetConnection:
+                    logger.debug("      ➡️ noInternetConnection → networkUnavailable")
+                    throw ServiceError.networkUnavailable
+                case .sslError:
+                    logger.debug("      ➡️ sslError → networkUnavailable")
+                    throw ServiceError.networkUnavailable
+                case .requestTooLarge:
+                    logger.debug("      ➡️ requestTooLarge → invalidData")
+                    throw ServiceError.invalidData
+                case .responseTooLarge:
+                    logger.debug("      ➡️ responseTooLarge → invalidData")
+                    throw ServiceError.invalidData
+                case .invalidContentType:
+                    logger.debug("      ➡️ invalidContentType → invalidData")
+                    throw ServiceError.invalidData
+                case .rateLimited:
+                    logger.debug("      ➡️ rateLimited → serviceUnavailable")
                     throw ServiceError.serviceUnavailable
                 case .unknown:
                     logger.debug("      ➡️ unknown → serviceUnavailable")
