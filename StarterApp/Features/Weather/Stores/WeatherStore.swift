@@ -53,7 +53,7 @@ class WeatherStore {
             let result = try await performFetch(for: city, forceRefresh: forceRefresh)
             forecast = result
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = handleError(error)
             forecast = nil
         }
         
@@ -123,6 +123,28 @@ class WeatherStore {
     }
     
     // MARK: - Private Methods
+    
+    private func handleError(_ error: Error) -> String {
+        if let serviceError = error as? ServiceError {
+            switch serviceError {
+            case .notFound:
+                return "Weather data not found for this city"
+            case .networkUnavailable:
+                return "Network connection unavailable"
+            case .fileCorrupted:
+                return "Local weather data is corrupted"
+            case .cacheExpired:
+                return "Cached weather data has expired"
+            case .invalidData:
+                return "Invalid weather data received"
+            case .serviceUnavailable:
+                return "Weather service is temporarily unavailable"
+            }
+        } else {
+            return error.localizedDescription
+        }
+    }
+    
     private func performFetch(for city: String, forceRefresh: Bool) async throws -> ForecastModel {
         switch dataSource {
         case .remote:

@@ -64,10 +64,10 @@ public struct TemperatureApiDTO: Codable {
     public let feels_like: Double?
     public let temp_min: Double?
     public let temp_max: Double?
-    public let pressure: Double?
-    public let sea_level: Double?
-    public let grnd_level: Double?
-    public let humidity: Double?
+    public let pressure: Int?
+    public let sea_level: Int?
+    public let grnd_level: Int?
+    public let humidity: Int?
     public let temp_kf: Double?
     
     enum CodingKeys: String, CodingKey {
