@@ -30,12 +30,45 @@ class AppContainer {
     
     // MARK: - Store Factories (Feature-specific)
     func makeWeatherStore() -> WeatherStore {
-        WeatherStore(
-            weatherService: WeatherService(
-                networkService: networkService,
-                useLocalData: useLocalData
-            )
+        let weatherRepository = makeWeatherRepository()
+        return WeatherStore(weatherRepository: weatherRepository)
+    }
+    
+    // MARK: - Repository Factories
+    private func makeWeatherRepository() -> WeatherRepository {
+        let remoteDataSource = WeatherRemoteDataSourceImpl(
+            networkService: networkService,
+            configuration: configuration
         )
+        
+        let localDataSource = makeLocalDataSource()
+        let cacheDataSource = WeatherMemoryCacheDataSource()
+        
+        let repositoryConfig = WeatherRepositoryImpl.RepositoryConfiguration(
+            useCache: true,
+            useLocalStorage: true,
+            cacheFirstStrategy: true,
+            offlineFallback: true
+        )
+        
+        return WeatherRepositoryImpl(
+            remoteDataSource: remoteDataSource,
+            localDataSource: localDataSource,
+            cacheDataSource: cacheDataSource,
+            configuration: repositoryConfig
+        )
+    }
+    
+    private func makeLocalDataSource() -> WeatherLocalDataSource {
+        switch environment {
+        case .development:
+            // Use file-based storage for development
+            return WeatherFileDataSourceImpl()
+        case .staging, .production:
+            // Use CoreData for production (would need Core Data setup)
+            // For now, fallback to file-based
+            return WeatherFileDataSourceImpl()
+        }
     }
     
     // MARK: - Environment Management
