@@ -48,17 +48,29 @@ struct WeatherView: View {
         } else if let forecast = weatherStore.forecast {
             WeatherList(forecast: forecast)
         } else if let errorMessage = weatherStore.errorMessage {
-            ErrorView(error: errorMessage) {
-                Task {
-                    await weatherStore.refreshWeather()
+            VStack {
+                Text("Error")
+                    .font(.headline)
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                Button("Retry") {
+                    Task {
+                        await weatherStore.refreshWeather()
+                    }
                 }
+                .padding()
             }
         } else {
-            EmptyStateView(
-                title: "No weather data",
-                subtitle: "Search for a city to get started",
-                systemImage: "cloud.sun"
-            )
+            VStack {
+                Image(systemName: "cloud.sun")
+                    .font(.largeTitle)
+                    .foregroundColor(.gray)
+                Text("No weather data")
+                    .font(.headline)
+                Text("Search for a city to get started")
+                    .foregroundColor(.gray)
+            }
+            .padding()
         }
     }
     
@@ -77,7 +89,7 @@ struct WeatherList: View {
     var body: some View {
         List {
             Section(header: Text(forecast.city.name)) {
-                ForEach(forecast.weatherBundle, id: \.dateTime) { weather in
+                ForEach(forecast.weatherItems, id: \.dateTime) { weather in
                     WeatherRowView(weather: weather)
                 }
             }

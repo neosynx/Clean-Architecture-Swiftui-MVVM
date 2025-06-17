@@ -18,7 +18,7 @@ class WeatherCoreDataSource: WeatherLocalDataSource {
         self.persistentContainer = persistentContainer
     }
     
-    func fetchWeather(for city: String) async throws -> ForecastModel? {
+    func fetchWeather(for city: String) async throws -> ForecastFileDTO? {
         return try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 let request = NSFetchRequest<WeatherEntity>(entityName: "WeatherEntity")
@@ -29,7 +29,7 @@ class WeatherCoreDataSource: WeatherLocalDataSource {
                     let entities = try self.context.fetch(request)
                     if let entity = entities.first,
                        let jsonData = entity.jsonData {
-                        let forecast = try JSONDecoder().decode(ForecastModel.self, from: jsonData)
+                        let forecast = try JSONDecoder().decode(ForecastFileDTO.self, from: jsonData)
                         continuation.resume(returning: forecast)
                     } else {
                         continuation.resume(returning: nil)
@@ -41,13 +41,13 @@ class WeatherCoreDataSource: WeatherLocalDataSource {
         }
     }
     
-    func saveWeather(_ forecast: ForecastModel) async throws {
+    func saveWeather(_ forecast: ForecastFileDTO) async throws {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 do {
                     // Delete existing entity if it exists
                     let request = NSFetchRequest<WeatherEntity>(entityName: "WeatherEntity")
-                    request.predicate = NSPredicate(format: "cityName == %@", forecast.city.name)
+                    request.predicate = NSPredicate(format: "cityName == %@", forecast.cityName)
                     
                     let existingEntities = try self.context.fetch(request)
                     for entity in existingEntities {
@@ -56,7 +56,7 @@ class WeatherCoreDataSource: WeatherLocalDataSource {
                     
                     // Create new entity
                     let entity = WeatherEntity(context: self.context)
-                    entity.cityName = forecast.city.name
+                    entity.cityName = forecast.cityName
                     entity.jsonData = try JSONEncoder().encode(forecast)
                     entity.lastUpdated = Date()
                     

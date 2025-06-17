@@ -20,7 +20,7 @@ class WeatherMemoryCacheDataSource: WeatherCacheDataSource {
             return cache[city.lowercased()]
         }
         
-        func set(_ forecast: ForecastModel, for city: String) {
+        func set(_ forecast: ForecastFileDTO, for city: String) {
             cache[city.lowercased()] = CachedWeather(
                 forecast: forecast,
                 timestamp: Date()
@@ -54,7 +54,7 @@ class WeatherMemoryCacheDataSource: WeatherCacheDataSource {
     }
     
     private struct CachedWeather {
-        let forecast: ForecastModel
+        let forecast: ForecastFileDTO
         let timestamp: Date
     }
     
@@ -64,7 +64,7 @@ class WeatherMemoryCacheDataSource: WeatherCacheDataSource {
         self.cacheActor = CacheActor(cacheExpirationTime: cacheExpirationTime)
     }
     
-    func getCachedWeather(for city: String) async throws -> ForecastModel? {
+    func getCachedWeather(for city: String) async throws -> ForecastFileDTO? {
         let cachedWeather = await cacheActor.get(for: city)
         
         guard let cachedWeather = cachedWeather else {
@@ -80,8 +80,8 @@ class WeatherMemoryCacheDataSource: WeatherCacheDataSource {
         return cachedWeather.forecast
     }
     
-    func cacheWeather(_ forecast: ForecastModel) async throws {
-        await cacheActor.set(forecast, for: forecast.city.name)
+    func cacheWeather(_ forecast: ForecastFileDTO) async throws {
+        await cacheActor.set(forecast, for: forecast.cityName)
     }
     
     func clearCache() async throws {

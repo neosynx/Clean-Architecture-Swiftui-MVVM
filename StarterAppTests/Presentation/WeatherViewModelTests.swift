@@ -10,7 +10,7 @@ import XCTest
 
 class MockWeatherRepository: WeatherRepository {
     func fetchWeather(for city: String) async throws -> ForecastModel {
-        return ForecastModel(city: City(name: city, country: "Test"), weatherBundle: [])
+        return ForecastModel(city: CityModel(name: city, country: "Test"), weatherBundle: [])
     }
     
     func saveWeather(_ forecast: ForecastModel) async throws {}

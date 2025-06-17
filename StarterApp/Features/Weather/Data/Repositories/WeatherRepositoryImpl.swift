@@ -49,24 +49,28 @@ class WeatherRepositoryImpl: WeatherRepository {
         
         // Strategy 2: Try remote data source
         do {
-            let forecast = try await remoteDataSource.fetchWeather(for: city)
+            let forecastApiDTO = try await remoteDataSource.fetchWeather(for: city)
+            let forecast = WeatherDomainMapper.mapToDomain(forecastApiDTO)
+            
+            // Convert to FileDTO for caching and local storage
+            let forecastFileDTO = WeatherDomainMapper.mapToFileDTO(forecast)
             
             // Cache the result if caching is enabled
             if configuration.useCache {
-                try await cacheDataSource.cacheWeather(forecast)
+                try await cacheDataSource.cacheWeather(forecastFileDTO)
             }
             
             // Save to local storage if enabled
             if configuration.useLocalStorage {
-                try await localDataSource.saveWeather(forecast)
+                try await localDataSource.saveWeather(forecastFileDTO)
             }
             
             return forecast
         } catch {
             // Strategy 3: Fallback to local storage if offline fallback is enabled
             if configuration.offlineFallback && configuration.useLocalStorage {
-                if let localForecast = try await localDataSource.fetchWeather(for: city) {
-                    return localForecast
+                if let localForecastDTO = try await localDataSource.fetchWeather(for: city) {
+                    return WeatherDomainMapper.mapToDomain(localForecastDTO)
                 }
             }
             
@@ -79,11 +83,12 @@ class WeatherRepositoryImpl: WeatherRepository {
             throw WeatherRepositoryError.storageError
         }
         
-        try await localDataSource.saveWeather(forecast)
+        let forecastFileDTO = WeatherDomainMapper.mapToFileDTO(forecast)
+        try await localDataSource.saveWeather(forecastFileDTO)
         
         // Also update cache if enabled
         if configuration.useCache {
-            try await cacheDataSource.cacheWeather(forecast)
+            try await cacheDataSource.cacheWeather(forecastFileDTO)
         }
     }
     
@@ -113,7 +118,10 @@ class WeatherRepositoryImpl: WeatherRepository {
             return nil
         }
         
-        return try await cacheDataSource.getCachedWeather(for: city)
+        if let cachedDTO = try await cacheDataSource.getCachedWeather(for: city) {
+            return WeatherDomainMapper.mapToDomain(cachedDTO)
+        }
+        return nil
     }
     
     func clearCache() async throws {
@@ -128,15 +136,17 @@ class WeatherRepositoryImpl: WeatherRepository {
     
     func refreshWeather(for city: String) async throws -> ForecastModel {
         // Force refresh from remote, bypassing cache
-        let forecast = try await remoteDataSource.fetchWeather(for: city)
+        let forecastApiDTO = try await remoteDataSource.fetchWeather(for: city)
+        let forecast = WeatherDomainMapper.mapToDomain(forecastApiDTO)
+        let forecastFileDTO = WeatherDomainMapper.mapToFileDTO(forecast)
         
         // Update cache and local storage
         if configuration.useCache {
-            try await cacheDataSource.cacheWeather(forecast)
+            try await cacheDataSource.cacheWeather(forecastFileDTO)
         }
         
         if configuration.useLocalStorage {
-            try await localDataSource.saveWeather(forecast)
+            try await localDataSource.saveWeather(forecastFileDTO)
         }
         
         return forecast
@@ -151,12 +161,13 @@ class WeatherRepositoryImpl: WeatherRepository {
         
         // Try local storage
         if configuration.useLocalStorage,
-           let localForecast = try await localDataSource.fetchWeather(for: city) {
-            return localForecast
+           let localForecastDTO = try await localDataSource.fetchWeather(for: city) {
+            return WeatherDomainMapper.mapToDomain(localForecastDTO)
         }
         
         // Finally try remote
-        return try await remoteDataSource.fetchWeather(for: city)
+        let forecastApiDTO = try await remoteDataSource.fetchWeather(for: city)
+        return WeatherDomainMapper.mapToDomain(forecastApiDTO)
     }
 }
 

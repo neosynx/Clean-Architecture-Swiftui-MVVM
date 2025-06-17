@@ -18,7 +18,7 @@ class WeatherFileDataSourceImpl: WeatherLocalDataSource {
         self.documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
     
-    func fetchWeather(for city: String) async throws -> ForecastModel? {
+    func fetchWeather(for city: String) async throws -> ForecastFileDTO? {
         let fileURL = getFileURL(for: city)
         
         guard fileManager.fileExists(atPath: fileURL.path) else {
@@ -27,14 +27,14 @@ class WeatherFileDataSourceImpl: WeatherLocalDataSource {
         
         do {
             let data = try Data(contentsOf: fileURL)
-            return try JSONDecoder().decode(ForecastModel.self, from: data)
+            return try JSONDecoder().decode(ForecastFileDTO.self, from: data)
         } catch {
             throw WeatherRepositoryError.invalidData
         }
     }
     
-    func saveWeather(_ forecast: ForecastModel) async throws {
-        let fileURL = getFileURL(for: forecast.city.name)
+    func saveWeather(_ forecast: ForecastFileDTO) async throws {
+        let fileURL = getFileURL(for: forecast.cityName)
         
         do {
             let data = try JSONEncoder().encode(forecast)

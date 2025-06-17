@@ -16,12 +16,12 @@ class WeatherRemoteDataSourceImpl: WeatherRemoteDataSource {
         self.configuration = configuration
     }
     
-    func fetchWeather(for city: String) async throws -> ForecastModel {
+    func fetchWeather(for city: String) async throws -> ForecastApiDTO {
         let apiKey = configuration.apiKey
         let url = "\(configuration.baseURL)?q=\(city)&appid=\(apiKey)&units=metric"
         
         do {
-            return try await networkService.fetch(ForecastModel.self, from: url)
+            return try await networkService.fetch(ForecastApiDTO.self, from: url)
         } catch {
             throw WeatherRepositoryError.networkError(error)
         }

@@ -12,9 +12,9 @@ struct WeatherRowView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Date: \(Date(timeIntervalSince1970: weather.dateTime), formatter: DateFormatter.shortDate)")
+            Text("Date: \(weather.dateTime, formatter: DateFormatter.shortDate)")
             Text("Temperature: \(weather.temperature.current)°C")
-            Text("Condition: \(weather.type.rawValue)")
+            Text("Condition: \(weather.condition.type.displayName)")
         }
         .padding()
     }

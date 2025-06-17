@@ -11,7 +11,7 @@ import XCTest
 class WeatherRepositoryTests: XCTestCase {
 
     func testWeatherModelCreation() {
-        let city = City(name: "London", country: "UK")
+        let city = CityModel(name: "London", country: "UK")
         let forecast = ForecastModel(city: city, weatherBundle: [])
         
         XCTAssertEqual(forecast.city.name, "London")
