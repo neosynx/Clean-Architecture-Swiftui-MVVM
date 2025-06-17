@@ -18,7 +18,7 @@ final class WeatherRemoteService: RemoteServiceImpl<String, ForecastApiDTO> {
     
     // MARK: - Initialization
     
-    init(networkService: NetworkService, configuration: AppConfiguration) {
+    init(networkService: NetworkService, configuration: AppConfiguration, logger: AppLogger) {
         self.apiKey = configuration.apiKey
         
         super.init(
@@ -27,7 +27,8 @@ final class WeatherRemoteService: RemoteServiceImpl<String, ForecastApiDTO> {
             headers: [
                 "Accept": "application/json",
                 "Content-Type": "application/json"
-            ]
+            ],
+            logger: logger
         )
     }
     
@@ -41,34 +42,46 @@ final class WeatherRemoteService: RemoteServiceImpl<String, ForecastApiDTO> {
     // MARK: - Enhanced Error Handling
     
     override func fetch(for city: String) async throws -> ForecastApiDTO {
-        print("☁️ WeatherRemoteService.fetch starting for city: \(city)")
+        logger.debug("☁️ WeatherRemoteService.fetch starting for city: \(city)")
         
         do {
             let result = try await super.fetch(for: city)
-            print("☁️ WeatherRemoteService.fetch completed successfully")
+            logger.debug("☁️ WeatherRemoteService.fetch completed successfully")
             return result
         } catch {
-            print("☁️ WeatherRemoteService.fetch caught error:")
-            print("   🏷️ Error type: \(type(of: error))")
-            print("   📝 Error description: \(error.localizedDescription)")
-            print("   🔍 Full error: \(error)")
+            logger.error("☁️ WeatherRemoteService.fetch caught error:")
+            logger.error("   🏷️ Error type: \(type(of: error))")
+            logger.error("   📝 Error description: \(error.localizedDescription)")
+            logger.error("   🔍 Full error: \(error)")
             
             // Map generic service errors to weather-specific errors
             if let serviceError = error as? ServiceError {
-                print("   🔄 Re-throwing ServiceError: \(serviceError)")
+                logger.debug("   🔄 Re-throwing ServiceError: \(serviceError)")
                 throw serviceError
             } else if let networkError = error as? NetworkError {
-                print("   🔄 Mapping NetworkError to ServiceError:")
+                logger.debug("   🔄 Mapping NetworkError to ServiceError:")
                 switch networkError {
                 case .invalidURL:
-                    print("      ➡️ invalidURL → invalidData")
+                    logger.debug("      ➡️ invalidURL → invalidData")
                     throw ServiceError.invalidData
                 case .noData:
-                    print("      ➡️ noData → notFound")
+                    logger.debug("      ➡️ noData → notFound")
                     throw ServiceError.notFound
+                case .decodingError:
+                    logger.debug("      ➡️ decodingError → invalidData")
+                    throw ServiceError.invalidData
+                case .networkError:
+                    logger.debug("      ➡️ networkError → networkUnavailable")
+                    throw ServiceError.networkUnavailable
+                case .httpError(let statusCode):
+                    logger.debug("      ➡️ httpError(\(statusCode)) → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
+                case .unknown:
+                    logger.debug("      ➡️ unknown → serviceUnavailable")
+                    throw ServiceError.serviceUnavailable
                 }
             } else {
-                print("   🔄 Unhandled error type, mapping to serviceUnavailable")
+                logger.debug("   🔄 Unhandled error type, mapping to serviceUnavailable")
                 throw ServiceError.serviceUnavailable
             }
         }

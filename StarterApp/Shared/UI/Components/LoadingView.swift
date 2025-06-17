@@ -169,7 +169,7 @@ struct CardView<Content: View>: View {
 
 #Preview("Error View") {
     ErrorView(error: "Failed to load weather data. Please check your internet connection.") {
-        print("Retry tapped")
+        // Retry action for preview
     }
 }
 
@@ -180,6 +180,6 @@ struct CardView<Content: View>: View {
         systemImage: "cloud.sun",
         actionTitle: "Search Cities"
     ) {
-        print("Search tapped")
+        // Search action for preview
     }
 }

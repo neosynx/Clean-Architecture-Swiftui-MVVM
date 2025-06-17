@@ -12,12 +12,18 @@ import UserNotifications
 class AppDelegate: NSObject, UIApplicationDelegate {
     var isNetworkAvailable = true
     var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
+    private let logger: AppLogger
+    
+    override init() {
+        self.logger = LoggerFactoryImpl.shared.createAppLogger()
+        super.init()
+    }
     
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        print("🚀 App launched successfully")
+        logger.info("🚀 App launched successfully")
         
         // Configure app-wide settings
         configureAppearance()
@@ -28,25 +34,25 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        print("📱 App became active")
+        logger.info("📱 App became active")
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
-        print("😴 App will resign active")
+        logger.info("😴 App will resign active")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
-        print("🌙 App entered background")
+        logger.info("🌙 App entered background")
         startBackgroundTask()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        print("☀️ App will enter foreground")
+        logger.info("☀️ App will enter foreground")
         endBackgroundTask()
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
-        print("💥 App will terminate")
+        logger.info("💥 App will terminate")
     }
     
     // MARK: - Configuration
@@ -66,7 +72,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     private func setupNetworkMonitoring() {
         // In a real app, you would set up network monitoring here
         // For example, using Network framework
-        print("🌐 Network monitoring configured")
+        logger.debug("🌐 Network monitoring configured")
     }
     
     private func requestNotificationPermissions() {
@@ -75,9 +81,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         ) { granted, error in
             DispatchQueue.main.async {
                 if granted {
-                    print("✅ Notification permissions granted")
+                    self.logger.info("✅ Notification permissions granted")
                 } else {
-                    print("❌ Notification permissions denied")
+                    self.logger.critical("❌ Notification permissions denied")
                 }
             }
         }
@@ -117,7 +123,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         // Handle notification tap
-        print("📱 Notification tapped: \(response.notification.request.identifier)")
+        logger.debug("📱 Notification tapped: \(response.notification.request.identifier)")
         completionHandler()
     }
 }
@@ -131,7 +137,7 @@ extension AppDelegate {
     ) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        print("📱 Device Token: \(token)")
+        logger.debug("📱 Device Token: \(token)")
         
         // Send token to your server
     }
@@ -140,7 +146,7 @@ extension AppDelegate {
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        print("❌ Failed to register for remote notifications: \(error)")
+        logger.error("❌ Failed to register for remote notifications: \(error)")
     }
     
     func application(
@@ -148,7 +154,7 @@ extension AppDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        print("📱 Received remote notification")
+        logger.debug("📱 Received remote notification")
         // Handle background fetch
         completionHandler(.newData)
     }
@@ -162,7 +168,7 @@ extension AppDelegate {
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        print("🔗 Opening URL: \(url)")
+        logger.debug("🔗 Opening URL: \(url)")
         // Handle deep links
         return true
     }

@@ -17,21 +17,44 @@ class AppContainer {
     // MARK: - Core Services (Shared across features)
     private(set) var networkService: NetworkService
     private(set) var analyticsService: AnalyticsService
+    private(set) var loggerFactory: LoggerFactoryImpl
     
     // MARK: - Initialization
     init() {
-        let env = AppEnvironment.production
+        let env = Self.detectEnvironment()
         
         self.configuration = AppConfiguration()
-        self.networkService = NetworkService(configuration: configuration)
-        self.analyticsService = AnalyticsService(environment: env)
         self.environment = env
+        
+        // Initialize logger factory based on environment
+        let loggingEnvironment: LoggingEnvironment = {
+            switch env {
+            case .development: return .debug
+            case .staging: return .staging
+            case .production: return .production
+            }
+        }()
+        
+        let loggingConfig = LoggingConfiguration.configuration(for: loggingEnvironment)
+        let loggerFactory = LoggerFactoryImpl(
+            subsystem: Bundle.main.bundleIdentifier ?? "com.starterapp",
+            configuration: loggingConfig
+        )
+        self.loggerFactory = loggerFactory
+        
+        self.networkService = NetworkServiceImpl(configuration: configuration, loggerFactory: loggerFactory)
+        self.analyticsService = AnalyticsServiceImpl(environment: env, loggerFactory: loggerFactory)
+        
+        // Log container initialization
+        let logger = loggerFactory.createAppLogger()
+        logger.info("AppContainer initialized for environment: \(env)")
     }
     
     // MARK: - Store Factories (Feature-specific)
     func makeWeatherStore() -> WeatherStore {
         let weatherRepository = makeWeatherRepository()
-        return WeatherStore(weatherRepository: weatherRepository)
+        let logger = loggerFactory.createWeatherLogger()
+        return WeatherStore(weatherRepository: weatherRepository, logger: logger)
     }
     
     // MARK: - Repository Factories
@@ -44,12 +67,14 @@ class AppContainer {
         // Choose strategy based on environment and preferences
         let strategy: WeatherRepositoryImpl.DataStrategy = .cacheFirst
         
+        let logger = loggerFactory.createWeatherLogger()
         return WeatherRepositoryImpl(
             remoteService: remoteService,
             fileService: fileService,
             cacheService: cacheService,
             strategy: strategy,
-            enableFallback: true
+            enableFallback: true,
+            logger: logger
         )
     }
     
@@ -57,15 +82,18 @@ class AppContainer {
         // Only create remote service if not in local-only mode
         guard !useLocalData else { return nil }
         
+        let logger = loggerFactory.createWeatherLogger()
         return WeatherRemoteService(
             networkService: networkService,
-            configuration: configuration
+            configuration: configuration,
+            logger: logger
         )
     }
     
     private func createWeatherFileService() -> WeatherFileService? {
         // Always create file service for local storage
-        return WeatherFileService()
+        let logger = loggerFactory.createWeatherLogger()
+        return WeatherFileService(logger: logger)
     }
     
     private func createWeatherCacheService() -> CacheServiceImpl<String, ForecastFileDTO> {
@@ -87,146 +115,39 @@ class AppContainer {
     // MARK: - Configuration
     func switchDataSource() {
         useLocalData.toggle()
-        print("Switched to \(useLocalData ? "local" : "remote") data")
+        let logger = loggerFactory.createAppLogger()
+        logger.info("Switched to \(useLocalData ? "local" : "remote") data source")
+    }
+    
+    // MARK: - Environment Detection
+    private static func detectEnvironment() -> AppEnvironment {
+        // Check for environment variable override first
+        if let envOverride = ProcessInfo.processInfo.environment["STARTERAPP_ENVIRONMENT"] {
+            switch envOverride.lowercased() {
+            case "development", "dev", "debug":
+                return .development
+            case "staging", "stage":
+                return .staging
+            case "production", "prod":
+                return .production
+            default:
+                break
+            }
+        }
+        
+        // Fallback to build configuration detection
+        #if DEBUG
+        return .development
+        #elseif STAGING
+        return .staging
+        #else
+        return .production
+        #endif
     }
 }
+
+// MARK: - App Environment
 
 enum AppEnvironment {
     case development, staging, production
-}
-
-// MARK: - Supporting Services
-class NetworkService {
-    private let configuration: AppConfiguration
-    
-    init(configuration: AppConfiguration) {
-        self.configuration = configuration
-    }
-    
-    func fetch<T: Codable>(_ type: T.Type, from url: String) async throws -> T {
-        print("🌐 NetworkService.fetch starting...")
-        print("   📍 URL: \(url)")
-        print("   🎯 Target Type: \(type)")
-        
-        guard let url = URL(string: url) else {
-            print("   ❌ Invalid URL format: \(url)")
-            throw NetworkError.invalidURL
-        }
-        print("   ✅ URL validation passed")
-        
-        do {
-            print("   📡 Making URLSession request...")
-            let (data, response) = try await URLSession.shared.data(from: url)
-            
-            // Log response details
-            if let httpResponse = response as? HTTPURLResponse {
-                print("   📊 HTTP Status: \(httpResponse.statusCode)")
-                print("   📋 Response Headers: \(httpResponse.allHeaderFields)")
-                
-                // Check for non-200 status codes
-                if !(200...299).contains(httpResponse.statusCode) {
-                    print("   ⚠️ Non-success status code: \(httpResponse.statusCode)")
-                }
-            }
-            
-            print("   📦 Response data size: \(data.count) bytes")
-            
-            // Log raw response for debugging (first 500 chars)
-            if let responseString = String(data: data, encoding: .utf8) {
-                let preview = String(responseString.prefix(500))
-                print("   📄 Response preview: \(preview)")
-                if responseString.count > 500 {
-                    print("   📄 ... (truncated, full size: \(responseString.count) chars)")
-                }
-            } else {
-                print("   ⚠️ Could not convert response data to string")
-            }
-            
-            // Attempt JSON decoding
-            print("   🔄 Attempting JSON decode to \(type)...")
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            
-            let result = try decoder.decode(type, from: data)
-            print("   ✅ JSON decode successful")
-            return result
-            
-        } catch let decodingError as DecodingError {
-            print("   ❌ JSON Decoding Error:")
-            switch decodingError {
-            case .dataCorrupted(let context):
-                print("      💥 Data corrupted: \(context.debugDescription)")
-                print("      🗂️ Coding path: \(context.codingPath)")
-            case .keyNotFound(let key, let context):
-                print("      🔑 Key not found: \(key.stringValue)")
-                print("      📍 Context: \(context.debugDescription)")
-                print("      🗂️ Coding path: \(context.codingPath)")
-            case .typeMismatch(let type, let context):
-                print("      🔀 Type mismatch for type: \(type)")
-                print("      📍 Context: \(context.debugDescription)")
-                print("      🗂️ Coding path: \(context.codingPath)")
-            case .valueNotFound(let type, let context):
-                print("      🚫 Value not found for type: \(type)")
-                print("      📍 Context: \(context.debugDescription)")
-                print("      🗂️ Coding path: \(context.codingPath)")
-            @unknown default:
-                print("      ❓ Unknown decoding error: \(decodingError)")
-            }
-            throw NetworkError.noData
-            
-        } catch let urlError as URLError {
-            print("   ❌ URL Error:")
-            print("      📟 Code: \(urlError.code.rawValue)")
-            print("      📝 Description: \(urlError.localizedDescription)")
-            print("      🌐 Failed URL: \(urlError.failureURLString ?? "nil")")
-            
-            switch urlError.code {
-            case .notConnectedToInternet:
-                print("      🚫 No internet connection")
-            case .timedOut:
-                print("      ⏰ Request timed out")
-            case .cannotFindHost:
-                print("      🏠 Cannot find host")
-            case .cannotConnectToHost:
-                print("      🔌 Cannot connect to host")
-            case .networkConnectionLost:
-                print("      📡 Network connection lost")
-            case .dnsLookupFailed:
-                print("      🔍 DNS lookup failed")
-            case .httpTooManyRedirects:
-                print("      🔄 Too many redirects")
-            case .resourceUnavailable:
-                print("      📭 Resource unavailable")
-            case .badURL:
-                print("      🚫 Bad URL")
-            default:
-                print("      ❓ Other URL error: \(urlError.localizedDescription)")
-            }
-            throw NetworkError.noData
-            
-        } catch {
-            print("   ❌ Unexpected Error:")
-            print("      📝 Description: \(error.localizedDescription)")
-            print("      🔍 Full error: \(error)")
-            throw NetworkError.noData
-        }
-    }
-}
-
-class AnalyticsService {
-    private let environment: AppEnvironment
-    
-    init(environment: AppEnvironment) {
-        self.environment = environment
-    }
-    
-    func track(_ event: String) {
-        guard environment != .development else { return }
-        print("📊 Analytics: \(event)")
-    }
-}
-
-enum NetworkError: Error {
-    case invalidURL
-    case noData
 }

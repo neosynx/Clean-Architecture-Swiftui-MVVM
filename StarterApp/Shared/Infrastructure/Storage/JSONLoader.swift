@@ -8,12 +8,16 @@
 import Foundation
 
 class JSONLoader {
-    func loadJSON(filename: String) -> Data? {
+    func loadJSON(filename: String, logger: AppLogger? = nil) -> Data? {
         if let url = Bundle.main.url(forResource: filename, withExtension: "json") {
             do {
                 return try Data(contentsOf: url)
             } catch {
-                print("Error loading local JSON file: \(error)")
+                if let logger = logger {
+                    logger.error("Error loading local JSON file: \(error)")
+                } else {
+                    print("Error loading local JSON file: \(error)")
+                }
             }
         }
         return nil

@@ -14,10 +14,11 @@ final class WeatherFileService: FileServiceImpl<String, ForecastFileDTO> {
     
     // MARK: - Initialization
     
-    init() {
+    init(logger: AppLogger) {
         super.init(
             directoryName: "Weather",
-            fileExtension: "json"
+            fileExtension: "json",
+            logger: logger
         )
     }
     

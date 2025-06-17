@@ -19,6 +19,7 @@ class WeatherStore {
     
     // MARK: - Dependencies
     private let weatherRepository: WeatherRepository
+    private let logger: AppLogger
     
     // MARK: - Data Source Configuration
     enum DataSourceType: String, CaseIterable {
@@ -33,8 +34,10 @@ class WeatherStore {
     }
     
     // MARK: - Initialization
-    init(weatherRepository: WeatherRepository) {
+    init(weatherRepository: WeatherRepository, logger: AppLogger) {
         self.weatherRepository = weatherRepository
+        self.logger = logger
+        logger.info("WeatherStore initialized")
         Task {
             await loadSavedCities()
         }
@@ -43,16 +46,25 @@ class WeatherStore {
     // MARK: - Weather Operations
     @MainActor
     func fetchWeather(for city: String, forceRefresh: Bool = false) async {
-        guard !city.isEmpty else { return }
+        guard !city.isEmpty else { 
+            logger.debug("Fetch weather skipped: empty city name")
+            return 
+        }
+        
+        logger.logUserAction("Fetch Weather", details: ["city": city, "forceRefresh": forceRefresh])
         
         isLoading = true
         errorMessage = nil
         selectedCity = city
         
         do {
-            let result = try await performFetch(for: city, forceRefresh: forceRefresh)
+            let result = try await logger.logExecutionTime(operation: "Fetch weather for \(city)") {
+                return try await performFetch(for: city, forceRefresh: forceRefresh)
+            }
             forecast = result
+            logger.info("Weather data loaded successfully for \(city)")
         } catch {
+            logger.logError(error, context: "Weather fetch for \(city)")
             errorMessage = handleError(error)
             forecast = nil
         }
@@ -62,33 +74,49 @@ class WeatherStore {
     
     @MainActor
     func refreshWeather() async {
-        guard !selectedCity.isEmpty else { return }
+        guard !selectedCity.isEmpty else { 
+            logger.debug("Refresh weather skipped: no city selected")
+            return 
+        }
+        logger.logUserAction("Refresh Weather", details: ["city": selectedCity])
         await fetchWeather(for: selectedCity, forceRefresh: true)
     }
     
     @MainActor
     func saveCurrentWeather() async {
-        guard let forecast = forecast else { return }
+        guard let forecast = forecast else { 
+            logger.debug("Save weather skipped: no forecast data")
+            return 
+        }
+        
+        logger.logUserAction("Save Weather", details: ["city": forecast.city.name])
         
         do {
             try await weatherRepository.saveWeather(forecast)
+            logger.logDataOperation(.create, entity: "Weather", identifier: forecast.city.name)
             await loadSavedCities()
         } catch {
+            logger.logError(error, context: "Save weather for \(forecast.city.name)")
             errorMessage = "Failed to save weather: \(error.localizedDescription)"
         }
     }
     
     @MainActor
     func deleteWeather(for city: String) async {
+        logger.logUserAction("Delete Weather", details: ["city": city])
+        
         do {
             try await weatherRepository.deleteWeather(for: city)
+            logger.logDataOperation(.delete, entity: "Weather", identifier: city)
             await loadSavedCities()
             
             // Clear current forecast if it's for the deleted city
             if selectedCity.lowercased() == city.lowercased() {
                 clearWeather()
+                logger.debug("Cleared current forecast after deleting \(city)")
             }
         } catch {
+            logger.logError(error, context: "Delete weather for \(city)")
             errorMessage = "Failed to delete weather: \(error.localizedDescription)"
         }
     }
@@ -97,21 +125,27 @@ class WeatherStore {
     func loadSavedCities() async {
         do {
             savedCities = try await weatherRepository.getAllSavedCities()
+            logger.debug("Loaded \(savedCities.count) saved cities")
         } catch {
-            print("Failed to load saved cities: \(error)")
+            logger.logError(error, context: "Load saved cities")
         }
     }
     
     @MainActor
     func clearCache() async {
+        logger.logUserAction("Clear Cache")
+        
         do {
             try await weatherRepository.clearCache()
+            logger.logCacheOperation(.clear, key: "all")
         } catch {
+            logger.logError(error, context: "Clear cache")
             errorMessage = "Failed to clear cache: \(error.localizedDescription)"
         }
     }
     
     func clearWeather() {
+        logger.debug("Clearing weather data")
         forecast = nil
         errorMessage = nil
         selectedCity = ""
@@ -119,7 +153,9 @@ class WeatherStore {
     
     // MARK: - Data Source Strategy
     func switchDataSource(to newSource: DataSourceType) {
+        let oldSource = dataSource
         dataSource = newSource
+        logger.logUserAction("Switch Data Source", details: ["from": oldSource.rawValue, "to": newSource.rawValue])
     }
     
     // MARK: - Private Methods

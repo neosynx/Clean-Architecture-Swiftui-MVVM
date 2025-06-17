@@ -19,17 +19,20 @@ class RemoteServiceImpl<Key: Hashable, Value: Codable>: RemoteDataService {
      let networkService: NetworkService
      let baseURL: String
      let headers: [String: String]
+     let logger: AppLogger
     
     // MARK: - Initialization
     
     init(
         networkService: NetworkService,
         baseURL: String,
-        headers: [String: String] = [:]
+        headers: [String: String] = [:],
+        logger: AppLogger
     ) {
         self.networkService = networkService
         self.baseURL = baseURL
         self.headers = headers
+        self.logger = logger
     }
     
     // MARK: - RemoteDataService Protocol
@@ -42,7 +45,7 @@ class RemoteServiceImpl<Key: Hashable, Value: Codable>: RemoteDataService {
         let url = buildURL(for: key)
         
         do {
-            print("fetch \(Value.self), url: \(url)")
+            logger.debug("fetch \(Value.self), url: \(url)")
             return try await networkService.fetch(Value.self, from: url)
         } catch {
             throw ServiceError.notFound
@@ -50,31 +53,31 @@ class RemoteServiceImpl<Key: Hashable, Value: Codable>: RemoteDataService {
     }
     
     func isAvailable() async -> Bool {
-        print("🔍 RemoteService.isAvailable checking network connectivity...")
+        logger.debug("🔍 RemoteService.isAvailable checking network connectivity...")
         
         // Basic network connectivity check
         guard let url = URL(string: "https://www.google.com") else {
-            print("   ❌ Failed to create Google URL for connectivity check")
+            logger.error("   ❌ Failed to create Google URL for connectivity check")
             return false
         }
         
         do {
-            print("   📡 Testing connectivity to google.com...")
+            logger.debug("   📡 Testing connectivity to google.com...")
             let (_, response) = try await URLSession.shared.data(from: url)
             
             if let httpResponse = response as? HTTPURLResponse {
                 let isAvailable = httpResponse.statusCode == 200
-                print("   📊 Google.com status: \(httpResponse.statusCode)")
-                print("   🌐 Network available: \(isAvailable)")
+                logger.debug("   📊 Google.com status: \(httpResponse.statusCode)")
+                logger.debug("   🌐 Network available: \(isAvailable)")
                 return isAvailable
             } else {
-                print("   ⚠️ Non-HTTP response from google.com")
+                logger.critical("   ⚠️ Non-HTTP response from google.com")
                 return false
             }
         } catch {
-            print("   ❌ Connectivity check failed:")
-            print("      🏷️ Error type: \(type(of: error))")
-            print("      📝 Error: \(error.localizedDescription)")
+            logger.error("   ❌ Connectivity check failed:")
+            logger.error("      🏷️ Error type: \(type(of: error))")
+            logger.error("      📝 Error: \(error.localizedDescription)")
             return false
         }
     }

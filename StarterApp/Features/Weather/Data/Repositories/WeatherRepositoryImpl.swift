@@ -18,6 +18,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
     private let fileService: WeatherFileService?
     private let cacheService: CacheServiceImpl<String, ForecastFileDTO>
     private let mapper: WeatherProtocolMapper
+    private let logger: AppLogger
     
     // MARK: - Configuration
     
@@ -38,7 +39,8 @@ final class WeatherRepositoryImpl: WeatherRepository {
         cacheService: CacheServiceImpl<String, ForecastFileDTO>? = nil,
         mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
         strategy: DataStrategy = .cacheFirst,
-        enableFallback: Bool = true
+        enableFallback: Bool = true,
+        logger: AppLogger
     ) {
         self.remoteService = remoteService
         self.fileService = fileService
@@ -46,7 +48,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
         self.mapper = mapper
         self.strategy = strategy
         self.enableFallback = enableFallback
-        
+        self.logger = logger
     }
     
     // MARK: - WeatherRepository Protocol
@@ -59,34 +61,34 @@ final class WeatherRepositoryImpl: WeatherRepository {
     }
     
     func saveWeather(_ forecast: ForecastModel) async throws {
-        print("💾 Repository.saveWeather starting for city: \(forecast.city.name)")
+        logger.info("💾 Repository.saveWeather starting for city: \(forecast.city.name)")
         
         do {
-            print("💾 Repository.saveWeather: Mapping domain to file DTO...")
+            logger.debug("💾 Repository.saveWeather: Mapping domain to file DTO...")
             let fileDTO = mapper.mapToFileDTO(forecast)
             let city = forecast.city.name
-            print("💾 Repository.saveWeather: File DTO mapping successful")
+            logger.debug("💾 Repository.saveWeather: File DTO mapping successful")
             
             // Save to cache
-            print("💾 Repository.saveWeather: Saving to cache...")
+            logger.debug("💾 Repository.saveWeather: Saving to cache...")
             try await cacheService.set(fileDTO, for: city)
-            print("💾 Repository.saveWeather: Cache save successful")
+            logger.debug("💾 Repository.saveWeather: Cache save successful")
             
             // Save to file if available
            /* if let fileService = fileService {
-                print("💾 Repository.saveWeather: Saving to file service...")
+                logger.debug("💾 Repository.saveWeather: Saving to file service...")
                 try await fileService.saveForecast(fileDTO, for: city)
-                print("💾 Repository.saveWeather: File save successful")
+                logger.debug("💾 Repository.saveWeather: File save successful")
             } else {
-                print("💾 Repository.saveWeather: File service not available, skipping file save")
+                logger.warning("💾 Repository.saveWeather: File service not available, skipping file save")
             }*/
             
             //print("💾 Repository.saveWeather: Completed successfully")
         } catch {
-            print("💾 Repository.saveWeather: Error occurred:")
-            print("   🏷️ Error type: \(type(of: error))")
-            print("   📝 Error: \(error.localizedDescription)")
-            print("   🔍 Full error: \(error)")
+            logger.error("💾 Repository.saveWeather: Error occurred:")
+            logger.error("   🏷️ Error type: \(type(of: error))")
+            logger.error("   📝 Error: \(error.localizedDescription)")
+            logger.error("   🔍 Full error: \(error)")
             throw error
         }
     }
@@ -125,34 +127,34 @@ final class WeatherRepositoryImpl: WeatherRepository {
     }
     
     func refreshWeather(for city: String) async throws -> ForecastModel {
-        print("🔄 Repository.refreshWeather starting for city: \(city)")
+        logger.info("🔄 Repository.refreshWeather starting for city: \(city)")
         
         guard let remoteService = remoteService else {
-            print("🔄 Repository.refreshWeather: Remote service is nil!")
+            logger.error("🔄 Repository.refreshWeather: Remote service is nil!")
             throw ServiceError.serviceUnavailable
         }
-        print("🔄 Repository.refreshWeather: Remote service available")
+        logger.debug("🔄 Repository.refreshWeather: Remote service available")
         
         do {
-            print("🔄 Repository.refreshWeather: Fetching from remote service...")
+            logger.debug("🔄 Repository.refreshWeather: Fetching from remote service...")
             let apiDTO = try await remoteService.fetch(for: city)
-            print("🔄 Repository.refreshWeather: Remote fetch successful, received DTO")
+            logger.debug("🔄 Repository.refreshWeather: Remote fetch successful, received DTO")
             
-            print("🔄 Repository.refreshWeather: Mapping DTO to domain model...")
+            logger.debug("🔄 Repository.refreshWeather: Mapping DTO to domain model...")
             let domainModel = mapper.mapToDomain(apiDTO)
-            print("🔄 Repository.refreshWeather: Domain mapping successful")
+            logger.debug("🔄 Repository.refreshWeather: Domain mapping successful")
             
-            print("🔄 Repository.refreshWeather: Saving weather data...")
+            logger.debug("🔄 Repository.refreshWeather: Saving weather data...")
             try await saveWeather(domainModel)
-            print("🔄 Repository.refreshWeather: Save successful")
+            logger.debug("🔄 Repository.refreshWeather: Save successful")
             
-            print("🔄 Repository.refreshWeather: Completed successfully")
+            logger.info("🔄 Repository.refreshWeather: Completed successfully")
             return domainModel
         } catch {
-            print("🔄 Repository.refreshWeather: Error occurred:")
-            print("   🏷️ Error type: \(type(of: error))")
-            print("   📝 Error: \(error.localizedDescription)")
-            print("   🔍 Full error: \(error)")
+            logger.error("🔄 Repository.refreshWeather: Error occurred:")
+            logger.error("   🏷️ Error type: \(type(of: error))")
+            logger.error("   📝 Error: \(error.localizedDescription)")
+            logger.error("   🔍 Full error: \(error)")
             throw error
         }
     }
@@ -187,15 +189,15 @@ final class WeatherRepositoryImpl: WeatherRepository {
         // Finally try remote if available and fallback enabled
         if enableFallback, let remoteService = remoteService {
             do {
-                print("🏗️ Repository: Attempting remote service fetch...")
+                logger.debug("🏗️ Repository: Attempting remote service fetch...")
                 let result = try await refreshWeather(for: city)
-                print("🏗️ Repository: Remote service fetch successful")
+                logger.debug("🏗️ Repository: Remote service fetch successful")
                 return result
             } catch {
-                print("🏗️ Repository: Remote service failed:")
-                print("   🏷️ Error type: \(type(of: error))")
-                print("   📝 Error: \(error.localizedDescription)")
-                print("   🔍 Full error: \(error)")
+                logger.error("🏗️ Repository: Remote service failed:")
+                logger.error("   🏷️ Error type: \(type(of: error))")
+                logger.error("   📝 Error: \(error.localizedDescription)")
+                logger.error("   🔍 Full error: \(error)")
                 throw error
             }
         }

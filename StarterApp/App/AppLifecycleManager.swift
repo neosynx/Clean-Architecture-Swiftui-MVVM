@@ -15,8 +15,11 @@ class AppLifecycleManager {
     var backgroundTasksActive = false
     
     private var cancellables = Set<AnyCancellable>()
+    private let logger: AppLogger
     
-    init() {
+    init(logger: AppLogger) {
+        self.logger = logger
+        logger.info("AppLifecycleManager initialized")
         setupLifecycleObservers()
     }
     
@@ -52,19 +55,19 @@ class AppLifecycleManager {
     // MARK: - Lifecycle Handlers
     
     private func handleAppBecameActive() {
-        print("🟢 AppLifecycleManager: App became active")
+        logger.logAppLifecycle(.becameActive)
         // Refresh data, resume timers, etc.
         refreshAppData()
     }
     
     private func handleAppWillResignActive() {
-        print("🟡 AppLifecycleManager: App will resign active")
+        logger.logAppLifecycle(.willResignActive)
         // Pause timers, save user input, etc.
         pauseActiveOperations()
     }
     
     private func handleAppDidEnterBackground() {
-        print("🔴 AppLifecycleManager: App entered background")
+        logger.logAppLifecycle(.enteredBackground)
         backgroundTasksActive = true
         // Save important data, stop location updates, etc.
         saveUserData()
@@ -72,7 +75,7 @@ class AppLifecycleManager {
     }
     
     private func handleAppWillEnterForeground() {
-        print("🟢 AppLifecycleManager: App will enter foreground")
+        logger.logAppLifecycle(.willEnterForeground)
         backgroundTasksActive = false
         // Restore UI, refresh data, etc.
         resumeFromBackground()
@@ -82,27 +85,27 @@ class AppLifecycleManager {
     
     private func refreshAppData() {
         // Refresh weather data, user settings, etc.
-        print("🔄 Refreshing app data...")
+        logger.info("Refreshing app data...")
     }
     
     private func pauseActiveOperations() {
         // Pause any active operations
-        print("⏸️ Pausing active operations...")
+        logger.info("Pausing active operations...")
     }
     
     private func saveUserData() {
         // Save any unsaved user data
-        print("💾 Saving user data...")
+        logger.info("Saving user data...")
     }
     
     private func startBackgroundTasks() {
         // Start any necessary background tasks
-        print("🌙 Starting background tasks...")
+        logger.info("Starting background tasks...")
     }
     
     private func resumeFromBackground() {
         // Resume operations when coming back from background
-        print("☀️ Resuming from background...")
+        logger.info("Resuming from background...")
         refreshAppData()
     }
     
@@ -110,7 +113,7 @@ class AppLifecycleManager {
     
     func updateNetworkStatus(_ isAvailable: Bool) {
         isNetworkAvailable = isAvailable
-        print("🌐 Network status changed: \(isAvailable ? "Available" : "Unavailable")")
+        logger.info("Network status changed: \(isAvailable ? "Available" : "Unavailable")")
         
         if isAvailable {
             handleNetworkRestored()
@@ -120,25 +123,25 @@ class AppLifecycleManager {
     }
     
     private func handleNetworkRestored() {
-        print("✅ Network restored - syncing data...")
+        logger.info("Network restored - syncing data...")
         // Sync pending data, retry failed requests, etc.
     }
     
     private func handleNetworkLost() {
-        print("❌ Network lost - enabling offline mode...")
+        logger.notice("Network lost - enabling offline mode...")
         // Enable offline mode, cache data, etc.
     }
     
     // MARK: - Memory Management
     
     func handleMemoryWarning() {
-        print("⚠️ Memory warning received - cleaning up...")
+        logger.notice("Memory warning received - cleaning up...")
         // Clear caches, release non-essential resources, etc.
         clearCaches()
     }
     
     private func clearCaches() {
-        print("🧹 Clearing caches and temporary data...")
+        logger.info("Clearing caches and temporary data...")
         // Implement cache clearing logic
     }
 }

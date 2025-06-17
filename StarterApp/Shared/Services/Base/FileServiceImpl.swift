@@ -21,15 +21,18 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
      let fileManager = FileManager.default
      let encoder: JSONEncoder
      let decoder: JSONDecoder
+     let logger: AppLogger
     
     // MARK: - Initialization
     
     init(
         directoryName: String,
-        fileExtension: String = "json"
+        fileExtension: String = "json",
+        logger: AppLogger
     ) {
         self.directoryName = directoryName
         self.fileExtension = fileExtension
+        self.logger = logger
         
         self.encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -95,29 +98,29 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
     
     /// Save value to file (available for subclasses)
     func save(_ value: Value, for key: Key) async throws {
-        print("📁 FileService.save starting for key: \(key)")
+        logger.debug("📁 FileService.save starting for key: \(key)")
         
         do {
-            print("📁 FileService.save: Ensuring directory exists...")
+            logger.debug("📁 FileService.save: Ensuring directory exists...")
             try await ensureDirectoryExists()
-            print("📁 FileService.save: Directory check successful")
+            logger.debug("📁 FileService.save: Directory check successful")
             
             let url = getFileURL(for: key)
-            print("📁 FileService.save: Target file URL: \(url)")
+            logger.debug("📁 FileService.save: Target file URL: \(url)")
             
-            print("📁 FileService.save: Encoding value to JSON...")
+            logger.debug("📁 FileService.save: Encoding value to JSON...")
             let data = try encoder.encode(value)
-            print("📁 FileService.save: JSON encoding successful, data size: \(data.count) bytes")
+            logger.debug("📁 FileService.save: JSON encoding successful, data size: \(data.count) bytes")
             
-            print("📁 FileService.save: Writing data to file...")
+            logger.debug("📁 FileService.save: Writing data to file...")
             try data.write(to: url, options: [.atomic])
-            print("📁 FileService.save: File write successful")
+            logger.debug("📁 FileService.save: File write successful")
             
         } catch {
-            print("📁 FileService.save: Error occurred:")
-            print("   🏷️ Error type: \(type(of: error))")
-            print("   📝 Error: \(error.localizedDescription)")
-            print("   🔍 Full error: \(error)")
+            logger.error("📁 FileService.save: Error occurred:")
+            logger.error("   🏷️ Error type: \(type(of: error))")
+            logger.error("   📝 Error: \(error.localizedDescription)")
+            logger.error("   🔍 Full error: \(error)")
             throw ServiceError.serviceUnavailable
         }
     }
@@ -164,26 +167,26 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
     
     private func ensureDirectoryExists() async throws {
         let directoryURL = getDirectoryURL()
-        print("📁 FileService.ensureDirectoryExists: Target directory: \(directoryURL)")
+        logger.debug("📁 FileService.ensureDirectoryExists: Target directory: \(directoryURL)")
         
         if !fileManager.fileExists(atPath: directoryURL.path) {
-            print("📁 FileService.ensureDirectoryExists: Directory doesn't exist, creating...")
+            logger.debug("📁 FileService.ensureDirectoryExists: Directory doesn't exist, creating...")
             do {
                 try fileManager.createDirectory(
                     at: directoryURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
-                print("📁 FileService.ensureDirectoryExists: Directory created successfully")
+                logger.debug("📁 FileService.ensureDirectoryExists: Directory created successfully")
             } catch {
-                print("📁 FileService.ensureDirectoryExists: Failed to create directory:")
-                print("   🏷️ Error type: \(type(of: error))")
-                print("   📝 Error: \(error.localizedDescription)")
-                print("   🔍 Full error: \(error)")
+                logger.error("📁 FileService.ensureDirectoryExists: Failed to create directory:")
+                logger.error("   🏷️ Error type: \(type(of: error))")
+                logger.error("   📝 Error: \(error.localizedDescription)")
+                logger.error("   🔍 Full error: \(error)")
                 throw ServiceError.serviceUnavailable
             }
         } else {
-            print("📁 FileService.ensureDirectoryExists: Directory already exists")
+            logger.debug("📁 FileService.ensureDirectoryExists: Directory already exists")
         }
     }
 }

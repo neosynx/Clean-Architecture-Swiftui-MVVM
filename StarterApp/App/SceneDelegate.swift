@@ -11,13 +11,19 @@ import SwiftUI
 class SceneDelegate: NSObject, UIWindowSceneDelegate {
     var window: UIWindow?
     var scenePhase: ScenePhase = .active
+    private let logger: AppLogger
+    
+    override init() {
+        self.logger = LoggerFactoryImpl.shared.createAppLogger()
+        super.init()
+    }
     
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        print("🌟 Scene will connect")
+        logger.info("🌟 Scene will connect")
         
         // Handle any URLs if the app was launched from a URL
         if let urlContext = connectionOptions.urlContexts.first {
@@ -31,26 +37,26 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
-        print("💫 Scene did disconnect")
+        logger.info("💫 Scene did disconnect")
     }
     
     func sceneDidBecomeActive(_ scene: UIScene) {
-        print("⚡ Scene became active")
+        logger.info("⚡ Scene became active")
         scenePhase = .active
     }
     
     func sceneWillResignActive(_ scene: UIScene) {
-        print("😪 Scene will resign active")
+        logger.info("😪 Scene will resign active")
         scenePhase = .inactive
     }
     
     func sceneWillEnterForeground(_ scene: UIScene) {
-        print("🌅 Scene will enter foreground")
+        logger.info("🌅 Scene will enter foreground")
         scenePhase = .active
     }
     
     func sceneDidEnterBackground(_ scene: UIScene) {
-        print("🌃 Scene entered background")
+        logger.info("🌃 Scene entered background")
         scenePhase = .background
         
         // Save user data if needed
@@ -65,7 +71,7 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     }
     
     private func handleURL(_ url: URL) {
-        print("🔗 Handling URL: \(url)")
+        logger.debug("🔗 Handling URL: \(url)")
         
         // Parse and handle deep links
         switch url.scheme {
@@ -74,12 +80,12 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
         case "https", "http":
             handleWebLink(url)
         default:
-            print("⚠️ Unknown URL scheme: \(url.scheme ?? "none")")
+            logger.critical("⚠️ Unknown URL scheme: \(url.scheme ?? "none")")
         }
     }
     
     private func handleDeepLink(_ url: URL) {
-        print("📱 Handling deep link: \(url.absoluteString)")
+        logger.debug("📱 Handling deep link: \(url.absoluteString)")
         
         // Example: examplemvvm://weather/london
         let pathComponents = url.pathComponents.filter { $0 != "/" }
@@ -88,16 +94,16 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
         case "weather":
             if pathComponents.count > 1 {
                 let city = pathComponents[1]
-                print("🌤️ Deep link to weather for city: \(city)")
+                logger.debug("🌤️ Deep link to weather for city: \(city)")
                 // Handle navigation to weather for specific city
             }
         default:
-            print("⚠️ Unknown deep link path: \(url.path)")
+            logger.critical("⚠️ Unknown deep link path: \(url.path)")
         }
     }
     
     private func handleWebLink(_ url: URL) {
-        print("🌐 Handling web link: \(url.absoluteString)")
+        logger.debug("🌐 Handling web link: \(url.absoluteString)")
         // Handle universal links
     }
     
@@ -113,14 +119,14 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     }
     
     private func handleShortcutItem(_ shortcutItem: UIApplicationShortcutItem) -> Bool {
-        print("⚡ Handling shortcut: \(shortcutItem.type)")
+        logger.debug("⚡ Handling shortcut: \(shortcutItem.type)")
         
         switch shortcutItem.type {
         case "com.example.weather.current":
-            print("🌤️ Quick action: Show current weather")
+            logger.debug("🌤️ Quick action: Show current weather")
             return true
         case "com.example.weather.forecast":
-            print("📅 Quick action: Show forecast")
+            logger.debug("📅 Quick action: Show forecast")
             return true
         default:
             return false
@@ -130,7 +136,7 @@ class SceneDelegate: NSObject, UIWindowSceneDelegate {
     // MARK: - Data Persistence
     
     private func saveApplicationData() {
-        print("💾 Saving application data...")
+        logger.info("💾 Saving application data...")
         // Implement data saving logic
         // This is where you would persist user data, cache, etc.
     }

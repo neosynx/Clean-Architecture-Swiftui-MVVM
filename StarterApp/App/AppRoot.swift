@@ -12,8 +12,15 @@ struct AppRoot: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var container = AppContainer()
     @State private var sceneDelegate = SceneDelegate()
-    @State private var lifecycleManager = AppLifecycleManager()
+    @State private var lifecycleManager: AppLifecycleManager
     @Environment(\.scenePhase) private var scenePhase
+    
+    init() {
+        let appContainer = AppContainer()
+        let logger = appContainer.loggerFactory.createAppLogger()
+        _container = State(initialValue: appContainer)
+        _lifecycleManager = State(initialValue: AppLifecycleManager(logger: logger))
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -32,18 +39,20 @@ struct AppRoot: App {
     }
     
     private func handleScenePhaseChange(_ phase: ScenePhase) {
+        let logger = container.loggerFactory.createAppLogger()
+        
         switch phase {
         case .active:
-            print("✅ App is now active")
+            logger.info("App scene is now active", file: #file, function: #function, line: #line)
             lifecycleManager.isAppActive = true
         case .inactive:
-            print("⏸️ App is now inactive")
+            logger.info("App scene is now inactive", file: #file, function: #function, line: #line)
             lifecycleManager.isAppActive = false
         case .background:
-            print("📱 App is now in background")
+            logger.info("App scene is now in background", file: #file, function: #function, line: #line)
             lifecycleManager.isAppActive = false
         @unknown default:
-            print("❓ Unknown scene phase")
+            logger.notice("Unknown scene phase detected", file: #file, function: #function, line: #line)
         }
     }
 }
