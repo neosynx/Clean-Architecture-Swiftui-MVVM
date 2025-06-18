@@ -80,6 +80,9 @@
 		E29A84D62E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */; };
 		E29A84D72E02DCD20082F24B /* WeatherDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */; };
 		E29A84D82E02DCD20082F24B /* WeatherDataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */; };
+		E29A84E02E02F0B30082F24B /* WeatherDomainErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DB2E02F0B30082F24B /* WeatherDomainErrors.swift */; };
+		E29A84E12E02F0B30082F24B /* WeatherRepositoryHealthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DD2E02F0B30082F24B /* WeatherRepositoryHealthService.swift */; };
+		E29A84E22E02F0B30082F24B /* WeatherRepositoryConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DC2E02F0B30082F24B /* WeatherRepositoryConfiguration.swift */; };
 		E2B37B292E01655300E46409 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B282E01655300E46409 /* SceneDelegate.swift */; };
 		E2B37B2A2E01655300E46409 /* AppLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B272E01655300E46409 /* AppLifecycleManager.swift */; };
 		E2B37B2B2E01655300E46409 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B262E01655300E46409 /* AppDelegate.swift */; };
@@ -180,6 +183,9 @@
 		E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataSources.swift; sourceTree = "<group>"; };
 		E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPersistenceDataSourceImpl.swift; sourceTree = "<group>"; };
 		E29A84D32E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRemoteDataSourceImpl.swift; sourceTree = "<group>"; };
+		E29A84DB2E02F0B30082F24B /* WeatherDomainErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDomainErrors.swift; sourceTree = "<group>"; };
+		E29A84DC2E02F0B30082F24B /* WeatherRepositoryConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRepositoryConfiguration.swift; sourceTree = "<group>"; };
+		E29A84DD2E02F0B30082F24B /* WeatherRepositoryHealthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRepositoryHealthService.swift; sourceTree = "<group>"; };
 		E2B37B262E01655300E46409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2B37B272E01655300E46409 /* AppLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifecycleManager.swift; sourceTree = "<group>"; };
 		E2B37B282E01655300E46409 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -448,6 +454,9 @@
 		E26EB42F2E01A5F900518C00 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E29A84DB2E02F0B30082F24B /* WeatherDomainErrors.swift */,
+				E29A84DC2E02F0B30082F24B /* WeatherRepositoryConfiguration.swift */,
+				E29A84DD2E02F0B30082F24B /* WeatherRepositoryHealthService.swift */,
 				E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */,
 				E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */,
 				E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */,
@@ -838,6 +847,9 @@
 				E26EB4722E02026D00518C00 /* AnalyticsService.swift in Sources */,
 				AB36A261E7384715BDF060DD /* AppContainer.swift in Sources */,
 				C593E1CDF677418AA6C913C4 /* WeatherStore.swift in Sources */,
+				E29A84E02E02F0B30082F24B /* WeatherDomainErrors.swift in Sources */,
+				E29A84E12E02F0B30082F24B /* WeatherRepositoryHealthService.swift in Sources */,
+				E29A84E22E02F0B30082F24B /* WeatherRepositoryConfiguration.swift in Sources */,
 				E26EB4432E01A64700518C00 /* DataService.swift in Sources */,
 				E26EB4522E01BE9100518C00 /* AppLoggerImpl.swift in Sources */,
 				E29A84A12E02B8A50082F24B /* SecureStorageService.swift in Sources */,

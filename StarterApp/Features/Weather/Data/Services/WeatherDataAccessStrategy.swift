@@ -66,7 +66,7 @@ struct CacheFirstStrategy: WeatherDataAccessStrategy {
             return forecast
         }
         
-        throw ServiceError.notFound
+        throw WeatherDomainError.cityNotFound(city)
     }
 }
 
@@ -107,7 +107,7 @@ struct PersistenceFirstStrategy: WeatherDataAccessStrategy {
             return forecast
         }
         
-        throw ServiceError.notFound
+        throw WeatherDomainError.cityNotFound(city)
     }
 }
 
@@ -153,7 +153,7 @@ struct NetworkFirstStrategy: WeatherDataAccessStrategy {
             return persisted
         }
         
-        throw ServiceError.notFound
+        throw WeatherDomainError.cityNotFound(city)
     }
 }
 

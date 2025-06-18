@@ -105,19 +105,90 @@ class AppContainer {
     
     // MARK: - Repository Factories
     private func makeWeatherRepository() -> WeatherRepository {
-        // Create services based on availability and environment
-        let remoteService = createWeatherRemoteService()
-        
-        // Choose strategy based on environment and preferences
-        let strategyType: WeatherDataAccessStrategyType = environment == .development ? .persistenceFirst : .cacheFirst
-        
         let logger = loggerFactory.createWeatherLogger()
+        
+        // Choose configuration based on environment
+        let configuration = makeWeatherRepositoryConfiguration()
+        
+        // Create data sources using proper dependency injection
+        let cacheDataSource = makeCacheDataSource(configuration: configuration, logger: logger)
+        let persistenceDataSource = makePersistenceDataSource(logger: logger)
+        let remoteDataSource = makeRemoteDataSource(logger: logger)
+        let healthService = makeHealthService(
+            cache: cacheDataSource,
+            persistence: persistenceDataSource,
+            remote: remoteDataSource,
+            configuration: configuration,
+            logger: logger
+        )
+        
+        // Create repository with improved configuration but old implementation for compatibility
         return WeatherRepositoryImpl(
             swiftDataContainer: swiftDataContainer,
-            remoteService: remoteService,
-            strategyType: strategyType,
+            remoteService: createWeatherRemoteService(),
+            mapper: WeatherProtocolMapper(),
+            strategyType: configuration.strategy.type,
             logger: logger,
             secureStorage: secureStorageService
+        )
+    }
+    
+    private func makeWeatherRepositoryConfiguration() -> WeatherRepositoryConfiguration {
+        switch environment {
+        case .development:
+            return .development
+        case .staging:
+            return .default
+        case .production:
+            return .production
+        }
+    }
+    
+    private func makeCacheDataSource(
+        configuration: WeatherRepositoryConfiguration,
+        logger: AppLogger
+    ) -> WeatherCacheDataSource {
+        return WeatherCacheDataSourceImpl(
+            countLimit: configuration.cache.countLimit,
+            totalCostLimit: configuration.cache.totalCostLimit,
+            expirationInterval: configuration.cache.expirationInterval,
+            logger: logger
+        )
+    }
+    
+    private func makePersistenceDataSource(logger: AppLogger) -> WeatherPersistenceDataSource {
+        return WeatherPersistenceDataSourceImpl(
+            persistenceService: swiftDataContainer,
+            mapper: WeatherProtocolMapper(),
+            logger: logger
+        )
+    }
+    
+    private func makeRemoteDataSource(logger: AppLogger) -> WeatherRemoteDataSource? {
+        guard let remoteService = createWeatherRemoteService() else {
+            return nil
+        }
+        
+        return WeatherRemoteDataSourceImpl(
+            remoteService: remoteService,
+            mapper: WeatherProtocolMapper(),
+            logger: logger
+        )
+    }
+    
+    private func makeHealthService(
+        cache: WeatherCacheDataSource,
+        persistence: WeatherPersistenceDataSource,
+        remote: WeatherRemoteDataSource?,
+        configuration: WeatherRepositoryConfiguration,
+        logger: AppLogger
+    ) -> WeatherRepositoryHealthService {
+        return WeatherRepositoryHealthServiceImpl(
+            cacheDataSource: cache,
+            persistenceDataSource: persistence,
+            remoteDataSource: remote,
+            configuration: configuration,
+            logger: logger
         )
     }
     
