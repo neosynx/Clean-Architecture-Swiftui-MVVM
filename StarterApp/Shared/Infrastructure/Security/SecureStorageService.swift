@@ -380,7 +380,7 @@ final class UserDefaultsService {
         if let suiteName = suiteName {
             UserDefaults.standard.removePersistentDomain(forName: suiteName)
         } else {
-            let domain = Bundle.main.bundleIdentifier!
+            let domain = Bundle.main.bundleIdentifier ?? "com.app.starterapp"
             UserDefaults.standard.removePersistentDomain(forName: domain)
         }
         
@@ -435,7 +435,9 @@ struct KeychainStored<T: Codable> {
         self.defaultValue = defaultValue
         // Note: This is a simplified implementation for the property wrapper
         // In production, you'd inject the logger properly
-        fatalError("KeychainStored property wrapper is not fully implemented - use SecureStorageService directly")
+        // For now, we provide a logger using the shared factory since property wrappers must be synchronous
+        let logger = LoggerFactoryImpl.shared.createLogger(category: "keychain")
+        self.keychainService = KeychainService(logger: logger)
     }
     
     var wrappedValue: T {

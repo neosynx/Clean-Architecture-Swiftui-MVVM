@@ -155,7 +155,10 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
     // MARK: - Private Methods
     
     private func getDirectoryURL() -> URL {
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+        guard let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            // Fallback to temporary directory if documents directory is not available
+            return fileManager.temporaryDirectory.appendingPathComponent(directoryName)
+        }
         return documentsURL.appendingPathComponent(directoryName)
     }
     

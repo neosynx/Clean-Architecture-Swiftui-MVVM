@@ -9,7 +9,8 @@
       "Bash(mv:*)",
       "Bash(find:*)",
       "Bash(true)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

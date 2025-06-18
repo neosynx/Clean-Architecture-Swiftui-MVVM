@@ -85,11 +85,16 @@ class AppContainer {
         } catch {
             appLogger.error("Failed to initialize SwiftData container: \(error)")
             // Fallback to in-memory for safety
-            self.swiftDataContainer = try! MainActor.assumeIsolated {
-                try SwiftDataContainer(
-                    configuration: .inMemory,
-                    logger: appLogger
-                )
+            do {
+                self.swiftDataContainer = try MainActor.assumeIsolated {
+                    try SwiftDataContainer(
+                        configuration: .inMemory,
+                        logger: appLogger
+                    )
+                }
+            } catch let fallbackError {
+                appLogger.error("Failed to initialize fallback in-memory container: \(fallbackError)")
+                fatalError("Unable to initialize any SwiftData container - application cannot continue")
             }
         }
         

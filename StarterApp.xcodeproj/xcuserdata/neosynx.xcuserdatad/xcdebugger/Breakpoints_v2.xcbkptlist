@@ -128,8 +128,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "85"
             endingLineNumber = "85"
-            landmarkName = "delete(for:)"
-            landmarkType = "9">
+            landmarkName = "WeatherRepositoryImpl"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -192,8 +192,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "86"
             endingLineNumber = "86"
-            landmarkName = "delete(for:)"
-            landmarkType = "9">
+            landmarkName = "getAllSavedIdentifiers()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -208,8 +208,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "76"
             endingLineNumber = "76"
-            landmarkName = "fetch(for:)"
-            landmarkType = "9">
+            landmarkName = "save(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -225,7 +225,7 @@
             startingLineNumber = "72"
             endingLineNumber = "72"
             landmarkName = "fetch(for:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -238,10 +238,10 @@
             filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "WeatherPersistenceFirstStrategy"
-            landmarkType = "14">
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "execute(for:cache:persistence:remote:logger:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -356,8 +356,8 @@
             filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
             landmarkName = "execute(for:cache:persistence:remote:logger:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -372,40 +372,10 @@
             filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
             landmarkName = "execute(for:cache:persistence:remote:logger:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "A6DC54D3-068C-4E13-9EC7-6D43DB62BFCE - dc34d55981c3f8a9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for StarterApp.WeatherPersistenceFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
-                  moduleName = "StarterApp.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60">
-               </Location>
-               <Location
-                  uuid = "A6DC54D3-068C-4E13-9EC7-6D43DB62BFCE - 6ce2ba6e11cc84ab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for StarterApp.WeatherPersistenceFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
-                  moduleName = "StarterApp.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "60"
-                  endingLineNumber = "60">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

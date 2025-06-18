@@ -64,10 +64,16 @@ final class WeatherRepositoryImpl: WeatherRepository {
     // MARK: - BaseRepository Protocol Implementation
     
     func fetch(for key: String) async throws -> ForecastModel {
+        guard let cacheImpl = cacheDataSource as? WeatherCacheDataSourceImpl,
+              let persistenceImpl = persistenceDataSource as? WeatherPersistenceDataSourceImpl else {
+            logger.error("Failed to cast data sources to expected implementation types")
+            throw ServiceError.invalidData
+        }
+        
         return try await dataAccessStrategy.execute(
             for: key,
-            cache: cacheDataSource as! WeatherCacheDataSourceImpl,
-            persistence: persistenceDataSource as! WeatherPersistenceDataSourceImpl,
+            cache: cacheImpl,
+            persistence: persistenceImpl,
             remote: remoteDataSource as? WeatherRemoteDataSourceImpl,
             logger: logger
         )

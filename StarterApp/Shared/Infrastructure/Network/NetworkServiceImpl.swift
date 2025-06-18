@@ -673,7 +673,9 @@ final class NetworkServiceImpl: NetworkService {
         let fileManager = FileManager.default
         
         let finalDestination = destination ?? {
-            let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            guard let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                return fileManager.temporaryDirectory.appendingPathComponent(localUrl.lastPathComponent)
+            }
             return documentsPath.appendingPathComponent(localUrl.lastPathComponent)
         }()
         
