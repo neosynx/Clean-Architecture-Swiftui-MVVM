@@ -76,17 +76,21 @@ class AppContainer {
         let appLogger = loggerFactory.createAppLogger()
         do {
             let containerConfig: SwiftDataContainer.Configuration = env == .development ? .inMemory : .default
-            self.swiftDataContainer = try SwiftDataContainer(
-                configuration: containerConfig,
-                logger: appLogger
-            )
+            self.swiftDataContainer = try MainActor.assumeIsolated {
+                try SwiftDataContainer(
+                    configuration: containerConfig,
+                    logger: appLogger
+                )
+            }
         } catch {
             appLogger.error("Failed to initialize SwiftData container: \(error)")
             // Fallback to in-memory for safety
-            self.swiftDataContainer = try! SwiftDataContainer(
-                configuration: .inMemory,
-                logger: appLogger
-            )
+            self.swiftDataContainer = try! MainActor.assumeIsolated {
+                try SwiftDataContainer(
+                    configuration: .inMemory,
+                    logger: appLogger
+                )
+            }
         }
         
         // Initialize secure storage

@@ -40,7 +40,9 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
             sortBy: WeatherEntity.sortByLastUpdated
         )
         
-        let results = try await persistenceService.fetch(descriptor)
+        let results = try await MainActor.run {
+            try persistenceService.fetch(descriptor)
+        }
         
         guard let weatherEntity = results.first else {
             logger.debug("🗄️ WeatherPersistenceDataSource.fetch: No data found for city: \(city)")
@@ -79,11 +81,15 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
             existing.dataTimestamp = updatedEntity.dataTimestamp
             existing.lastUpdated = Date()
             
-            try await persistenceService.update(existing)
+            try await MainActor.run {
+                try persistenceService.update(existing)
+            }
         } else {
             logger.debug("🗄️ WeatherPersistenceDataSource.save: Inserting new entry")
             let swiftDataEntity = mapper.mapToSwiftDataEntity(forecast)
-            try await persistenceService.insert(swiftDataEntity)
+            try await MainActor.run {
+                try persistenceService.insert(swiftDataEntity)
+            }
         }
         
         logger.debug("🗄️ WeatherPersistenceDataSource.save: Completed successfully")
@@ -93,7 +99,9 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
         logger.debug("🗄️ WeatherPersistenceDataSource.delete for city: \(city)")
         
         if let swiftDataEntity = try await fetchSwiftDataEntity(for: city) {
-            try await persistenceService.delete(swiftDataEntity)
+            try await MainActor.run {
+                try persistenceService.delete(swiftDataEntity)
+            }
             logger.debug("🗄️ WeatherPersistenceDataSource.delete: Successfully deleted")
         } else {
             logger.debug("🗄️ WeatherPersistenceDataSource.delete: No data found to delete")
@@ -107,7 +115,9 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
             sortBy: [SortDescriptor(\.lastUpdated, order: .reverse)]
         )
         
-        let allWeather = try await persistenceService.fetch(descriptor)
+        let allWeather = try await MainActor.run {
+            try persistenceService.fetch(descriptor)
+        }
         let cities = Array(Set(allWeather.map { $0.cityName })).sorted()
         
         logger.debug("🗄️ WeatherPersistenceDataSource.getAllSavedCities: Found \(cities.count) cities")
@@ -123,7 +133,9 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
             sortBy: WeatherEntity.sortByLastUpdated
         )
         
-        let results = try await persistenceService.fetch(descriptor)
+        let results = try await MainActor.run {
+            try persistenceService.fetch(descriptor)
+        }
         return results.first
     }
 }

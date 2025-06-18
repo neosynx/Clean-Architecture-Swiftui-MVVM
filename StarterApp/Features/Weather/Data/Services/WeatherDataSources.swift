@@ -7,10 +7,10 @@
 
 import Foundation
 
-// MARK: - Weather Cache Data Source Protocol
+// MARK: - Weather Data Source Type Aliases
 
-/// Protocol for weather data caching operations
-protocol WeatherCacheDataSource {
+/// Weather-specific cache data source - bridges to generic protocol
+protocol WeatherCacheDataSource: CacheDataSource where Key == String, Model == ForecastModel {
     /// Get cached weather data
     func get(for city: String) async throws -> ForecastModel?
     
@@ -24,10 +24,8 @@ protocol WeatherCacheDataSource {
     func clear() async throws
 }
 
-// MARK: - Weather Persistence Data Source Protocol
-
-/// Protocol for weather data persistence operations
-protocol WeatherPersistenceDataSource {
+/// Weather-specific persistence data source - bridges to generic protocol
+protocol WeatherPersistenceDataSource: PersistenceDataSource where Key == String, Model == ForecastModel, IdentifierType == String {
     /// Fetch persisted weather data
     func fetch(for city: String) async throws -> ForecastModel?
     
@@ -41,10 +39,17 @@ protocol WeatherPersistenceDataSource {
     func getAllSavedCities() async throws -> [String]
 }
 
-// MARK: - Weather Remote Data Source Protocol
+// MARK: - Default Implementation Bridge
 
-/// Protocol for weather data remote operations
-protocol WeatherRemoteDataSource {
+extension WeatherPersistenceDataSource {
+    /// Bridge implementation for generic protocol requirement
+    func getAllSavedIdentifiers() async throws -> [String] {
+        return try await getAllSavedCities()
+    }
+}
+
+/// Weather-specific remote data source - bridges to generic protocol
+protocol WeatherRemoteDataSource: RemoteDataSource where Key == String, Model == ForecastModel {
     /// Fetch weather data from remote source
     func fetch(for city: String) async throws -> ForecastModel
     
@@ -52,22 +57,7 @@ protocol WeatherRemoteDataSource {
     var isAvailable: Bool { get }
 }
 
-// MARK: - Strategy Type Definition
+// MARK: - Weather Strategy Type Alias
 
-/// Data access strategy types for weather data
-enum WeatherDataAccessStrategyType: String, CaseIterable {
-    case cacheFirst = "cache_first"
-    case persistenceFirst = "persistence_first" 
-    case networkFirst = "network_first"
-    
-    var description: String {
-        switch self {
-        case .cacheFirst:
-            return "Cache → Persistence → Network"
-        case .persistenceFirst:
-            return "Persistence → Cache → Network"
-        case .networkFirst:
-            return "Network → Cache → Persistence"
-        }
-    }
-}
+/// Weather-specific data access strategy type - maps to generic type
+typealias WeatherDataAccessStrategyType = DataAccessStrategyType

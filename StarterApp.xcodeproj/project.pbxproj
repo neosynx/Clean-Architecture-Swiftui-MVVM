@@ -83,6 +83,9 @@
 		E29A84E02E02F0B30082F24B /* WeatherDomainErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DB2E02F0B30082F24B /* WeatherDomainErrors.swift */; };
 		E29A84E12E02F0B30082F24B /* WeatherRepositoryHealthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DD2E02F0B30082F24B /* WeatherRepositoryHealthService.swift */; };
 		E29A84E22E02F0B30082F24B /* WeatherRepositoryConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84DC2E02F0B30082F24B /* WeatherRepositoryConfiguration.swift */; };
+		E29A84E52E02F7240082F24B /* GenericDataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84E32E02F7240082F24B /* GenericDataAccessStrategy.swift */; };
+		E29A84E62E02F7240082F24B /* GenericDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84E42E02F7240082F24B /* GenericDataSources.swift */; };
+		E29A84E82E02F7540082F24B /* GenericDataAccessStrategies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84E72E02F7540082F24B /* GenericDataAccessStrategies.swift */; };
 		E2B37B292E01655300E46409 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B282E01655300E46409 /* SceneDelegate.swift */; };
 		E2B37B2A2E01655300E46409 /* AppLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B272E01655300E46409 /* AppLifecycleManager.swift */; };
 		E2B37B2B2E01655300E46409 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B262E01655300E46409 /* AppDelegate.swift */; };
@@ -186,6 +189,9 @@
 		E29A84DB2E02F0B30082F24B /* WeatherDomainErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDomainErrors.swift; sourceTree = "<group>"; };
 		E29A84DC2E02F0B30082F24B /* WeatherRepositoryConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRepositoryConfiguration.swift; sourceTree = "<group>"; };
 		E29A84DD2E02F0B30082F24B /* WeatherRepositoryHealthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRepositoryHealthService.swift; sourceTree = "<group>"; };
+		E29A84E32E02F7240082F24B /* GenericDataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDataAccessStrategy.swift; sourceTree = "<group>"; };
+		E29A84E42E02F7240082F24B /* GenericDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDataSources.swift; sourceTree = "<group>"; };
+		E29A84E72E02F7540082F24B /* GenericDataAccessStrategies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericDataAccessStrategies.swift; sourceTree = "<group>"; };
 		E2B37B262E01655300E46409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2B37B272E01655300E46409 /* AppLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifecycleManager.swift; sourceTree = "<group>"; };
 		E2B37B282E01655300E46409 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -479,6 +485,7 @@
 		E26EB43F2E01A64700518C00 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				E29A84E72E02F7540082F24B /* GenericDataAccessStrategies.swift */,
 				E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */,
 				E29A84A72E02B8C10082F24B /* NSCacheServiceImpl.swift */,
 				E26EB43D2E01A64700518C00 /* FileServiceImpl.swift */,
@@ -490,6 +497,8 @@
 		E26EB4412E01A64700518C00 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
+				E29A84E32E02F7240082F24B /* GenericDataAccessStrategy.swift */,
+				E29A84E42E02F7240082F24B /* GenericDataSources.swift */,
 				E29A84AF2E02CCC40082F24B /* BaseRepository.swift */,
 				E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */,
 				E26EB4402E01A64700518C00 /* DataService.swift */,
@@ -845,7 +854,10 @@
 				E2B37B2A2E01655300E46409 /* AppLifecycleManager.swift in Sources */,
 				E2B37B2B2E01655300E46409 /* AppDelegate.swift in Sources */,
 				E26EB4722E02026D00518C00 /* AnalyticsService.swift in Sources */,
+				E29A84E52E02F7240082F24B /* GenericDataAccessStrategy.swift in Sources */,
+				E29A84E62E02F7240082F24B /* GenericDataSources.swift in Sources */,
 				AB36A261E7384715BDF060DD /* AppContainer.swift in Sources */,
+				E29A84E82E02F7540082F24B /* GenericDataAccessStrategies.swift in Sources */,
 				C593E1CDF677418AA6C913C4 /* WeatherStore.swift in Sources */,
 				E29A84E02E02F0B30082F24B /* WeatherDomainErrors.swift in Sources */,
 				E29A84E12E02F0B30082F24B /* WeatherRepositoryHealthService.swift in Sources */,

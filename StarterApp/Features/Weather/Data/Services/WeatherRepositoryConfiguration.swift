@@ -57,7 +57,7 @@ struct WeatherRepositoryConfiguration {
         )
         
         static let development = StrategyConfiguration(
-            type: .persistenceFirst,
+            type: .networkFirst,
             enableFallbacks: true,
             maxRetryAttempts: 1,
             retryDelay: 1.0

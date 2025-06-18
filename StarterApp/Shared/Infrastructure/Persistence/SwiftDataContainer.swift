@@ -9,8 +9,9 @@ import Foundation
 import SwiftData
 
 /// SwiftData container for managing persistent storage in iOS 17+
-/// This actor ensures thread-safe access to the model container and context
-actor SwiftDataContainer {
+/// This main actor ensures thread-safe access to the model container and context
+@MainActor
+final class SwiftDataContainer {
     
     // MARK: - Properties
     
@@ -74,7 +75,7 @@ actor SwiftDataContainer {
     // MARK: - CRUD Operations
     
     /// Fetch models matching the given descriptor
-    func fetch<T: PersistentModel>(_ descriptor: FetchDescriptor<T>) async throws -> [T] {
+    func fetch<T: PersistentModel>(_ descriptor: FetchDescriptor<T>) throws -> [T] {
         logger.debug("Fetching \(T.self) with descriptor")
         
         do {
@@ -88,32 +89,32 @@ actor SwiftDataContainer {
     }
     
     /// Fetch all models of a given type
-    func fetchAll<T: PersistentModel>(_ type: T.Type) async throws -> [T] {
+    func fetchAll<T: PersistentModel>(_ type: T.Type) throws -> [T] {
         let descriptor = FetchDescriptor<T>()
-        return try await fetch(descriptor)
+        return try fetch(descriptor)
     }
     
     /// Fetch a single model by predicate
     func fetchOne<T: PersistentModel>(
         _ type: T.Type,
         where predicate: Predicate<T>
-    ) async throws -> T? {
+    ) throws -> T? {
         let descriptor = FetchDescriptor<T>(
             predicate: predicate,
             sortBy: []
         )
         
-        let results = try await fetch(descriptor)
+        let results = try fetch(descriptor)
         return results.first
     }
     
     /// Insert a new model
-    func insert<T: PersistentModel>(_ model: T) async throws {
+    func insert<T: PersistentModel>(_ model: T) throws {
         logger.debug("Inserting \(type(of: model))")
         
         do {
             modelContext.insert(model)
-            try await save()
+            try save()
             logger.debug("Successfully inserted \(type(of: model))")
         } catch {
             logger.error("Failed to insert \(type(of: model)): \(error)")
@@ -122,14 +123,14 @@ actor SwiftDataContainer {
     }
     
     /// Insert multiple models
-    func insertBatch<T: PersistentModel>(_ models: [T]) async throws {
+    func insertBatch<T: PersistentModel>(_ models: [T]) throws {
         logger.debug("Batch inserting \(models.count) \(T.self) items")
         
         do {
             for model in models {
                 modelContext.insert(model)
             }
-            try await save()
+            try save()
             logger.debug("Successfully batch inserted \(models.count) items")
         } catch {
             logger.error("Failed to batch insert: \(error)")
@@ -138,12 +139,12 @@ actor SwiftDataContainer {
     }
     
     /// Update an existing model
-    func update<T: PersistentModel>(_ model: T) async throws {
+    func update<T: PersistentModel>(_ model: T) throws {
         logger.debug("Updating \(type(of: model))")
         
         do {
             // SwiftData automatically tracks changes
-            try await save()
+            try save()
             logger.debug("Successfully updated \(type(of: model))")
         } catch {
             logger.error("Failed to update \(type(of: model)): \(error)")
@@ -152,12 +153,12 @@ actor SwiftDataContainer {
     }
     
     /// Delete a model
-    func delete<T: PersistentModel>(_ model: T) async throws {
+    func delete<T: PersistentModel>(_ model: T) throws {
         logger.debug("Deleting \(type(of: model))")
         
         do {
             modelContext.delete(model)
-            try await save()
+            try save()
             logger.debug("Successfully deleted \(type(of: model))")
         } catch {
             logger.error("Failed to delete \(type(of: model)): \(error)")
@@ -169,18 +170,18 @@ actor SwiftDataContainer {
     func deleteAll<T: PersistentModel>(
         _ type: T.Type,
         where predicate: Predicate<T>? = nil
-    ) async throws {
+    ) throws {
         logger.debug("Deleting all \(T.self) matching predicate")
         
         do {
             let descriptor = FetchDescriptor<T>(predicate: predicate)
-            let models = try await fetch(descriptor)
+            let models = try fetch(descriptor)
             
             for model in models {
                 modelContext.delete(model)
             }
             
-            try await save()
+            try save()
             logger.debug("Successfully deleted \(models.count) \(T.self) items")
         } catch {
             logger.error("Failed to delete all \(T.self): \(error)")
@@ -192,21 +193,21 @@ actor SwiftDataContainer {
     func count<T: PersistentModel>(
         _ type: T.Type,
         where predicate: Predicate<T>? = nil
-    ) async throws -> Int {
+    ) throws -> Int {
         let descriptor = FetchDescriptor<T>(predicate: predicate)
-        let results = try await fetch(descriptor)
+        let results = try fetch(descriptor)
         return results.count
     }
     
     // MARK: - Transaction Support
     
     /// Perform operations in a transaction
-    func transaction<T>(_ block: @escaping () throws -> T) async throws -> T {
+    func transaction<T>(_ block: @escaping () throws -> T) throws -> T {
         logger.debug("Starting transaction")
         
         do {
             let result = try block()
-            try await save()
+            try save()
             logger.debug("Transaction completed successfully")
             return result
         } catch {
@@ -218,7 +219,7 @@ actor SwiftDataContainer {
     
     // MARK: - Private Methods
     
-    private func save() async throws {
+    private func save() throws {
         guard modelContext.hasChanges else {
             logger.debug("No changes to save")
             return
@@ -231,7 +232,7 @@ actor SwiftDataContainer {
     // MARK: - Maintenance
     
     /// Clear all data (useful for testing)
-    func clearAllData() async throws {
+    func clearAllData() throws {
         logger.info("Clearing all SwiftData storage")
         
         // This would need to iterate through all model types
@@ -242,7 +243,7 @@ actor SwiftDataContainer {
     }
     
     /// Get storage statistics
-    func getStatistics() async throws -> StorageStatistics {
+    func getStatistics() throws -> StorageStatistics {
         // Placeholder for storage statistics
         // In a real implementation, you'd query model counts
         StorageStatistics(
