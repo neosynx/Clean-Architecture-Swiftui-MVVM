@@ -75,11 +75,11 @@
 		E29A84AE2E02CCB10082F24B /* BaseRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */; };
 		E29A84B12E02CCC40082F24B /* BaseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84AF2E02CCC40082F24B /* BaseRepository.swift */; };
 		E29A84B22E02CCC40082F24B /* DataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */; };
-		E29A84C12E02D5510082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84BE2E02D5510082F24B /* WeatherPersistenceDataSourceImpl.swift */; };
-		E29A84C22E02D5510082F24B /* WeatherRemoteDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84BF2E02D5510082F24B /* WeatherRemoteDataSourceImpl.swift */; };
-		E29A84C32E02D5510082F24B /* WeatherCacheDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84BD2E02D5510082F24B /* WeatherCacheDataSourceImpl.swift */; };
-		E29A84C72E02D5640082F24B /* WeatherDataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84C42E02D5640082F24B /* WeatherDataAccessStrategy.swift */; };
-		E29A84C82E02D5640082F24B /* WeatherDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84C52E02D5640082F24B /* WeatherDataSources.swift */; };
+		E29A84D42E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */; };
+		E29A84D52E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D32E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift */; };
+		E29A84D62E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */; };
+		E29A84D72E02DCD20082F24B /* WeatherDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */; };
+		E29A84D82E02DCD20082F24B /* WeatherDataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */; };
 		E2B37B292E01655300E46409 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B282E01655300E46409 /* SceneDelegate.swift */; };
 		E2B37B2A2E01655300E46409 /* AppLifecycleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B272E01655300E46409 /* AppLifecycleManager.swift */; };
 		E2B37B2B2E01655300E46409 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B37B262E01655300E46409 /* AppDelegate.swift */; };
@@ -175,11 +175,11 @@
 		E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepositoryImpl.swift; sourceTree = "<group>"; };
 		E29A84AF2E02CCC40082F24B /* BaseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepository.swift; sourceTree = "<group>"; };
 		E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataAccessStrategy.swift; sourceTree = "<group>"; };
-		E29A84BD2E02D5510082F24B /* WeatherCacheDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCacheDataSourceImpl.swift; sourceTree = "<group>"; };
-		E29A84BE2E02D5510082F24B /* WeatherPersistenceDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPersistenceDataSourceImpl.swift; sourceTree = "<group>"; };
-		E29A84BF2E02D5510082F24B /* WeatherRemoteDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRemoteDataSourceImpl.swift; sourceTree = "<group>"; };
-		E29A84C42E02D5640082F24B /* WeatherDataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataAccessStrategy.swift; sourceTree = "<group>"; };
-		E29A84C52E02D5640082F24B /* WeatherDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataSources.swift; sourceTree = "<group>"; };
+		E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCacheDataSourceImpl.swift; sourceTree = "<group>"; };
+		E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataAccessStrategy.swift; sourceTree = "<group>"; };
+		E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataSources.swift; sourceTree = "<group>"; };
+		E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPersistenceDataSourceImpl.swift; sourceTree = "<group>"; };
+		E29A84D32E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRemoteDataSourceImpl.swift; sourceTree = "<group>"; };
 		E2B37B262E01655300E46409 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E2B37B272E01655300E46409 /* AppLifecycleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifecycleManager.swift; sourceTree = "<group>"; };
 		E2B37B282E01655300E46409 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -448,6 +448,11 @@
 		E26EB42F2E01A5F900518C00 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */,
+				E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */,
+				E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */,
+				E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */,
+				E29A84D32E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift */,
 				E26EB42D2E01A5F900518C00 /* WeatherFileService.swift */,
 				E26EB42E2E01A5F900518C00 /* WeatherRemoteService.swift */,
 			);
@@ -490,7 +495,6 @@
 		E26EB4422E01A64700518C00 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E29A84B62E02CCDC0082F24B /* Strategies */,
 				E26EB43F2E01A64700518C00 /* Base */,
 				E26EB4412E01A64700518C00 /* Protocols */,
 			);
@@ -574,46 +578,6 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
-		E29A84AC2E02C6B40082F24B /* Enums */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Enums;
-			sourceTree = "<group>";
-		};
-		E29A84B62E02CCDC0082F24B /* Strategies */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Strategies;
-			sourceTree = "<group>";
-		};
-		E29A84BB2E02D00F0082F24B /* Strategies */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Strategies;
-			sourceTree = "<group>";
-		};
-		E29A84C02E02D5510082F24B /* DataSources */ = {
-			isa = PBXGroup;
-			children = (
-				E29A84BD2E02D5510082F24B /* WeatherCacheDataSourceImpl.swift */,
-				E29A84BE2E02D5510082F24B /* WeatherPersistenceDataSourceImpl.swift */,
-				E29A84BF2E02D5510082F24B /* WeatherRemoteDataSourceImpl.swift */,
-			);
-			path = DataSources;
-			sourceTree = "<group>";
-		};
-		E29A84C62E02D5640082F24B /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-				E29A84C42E02D5640082F24B /* WeatherDataAccessStrategy.swift */,
-				E29A84C52E02D5640082F24B /* WeatherDataSources.swift */,
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
 		E2B37B342E01657C00E46409 /* Features */ = {
 			isa = PBXGroup;
 			children = (
@@ -626,7 +590,6 @@
 		E2B37B352E01658300E46409 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				E29A84AC2E02C6B40082F24B /* Enums */,
 				E26EB4572E01F84A00518C00 /* Logging */,
 				E26EB4422E01A64700518C00 /* Services */,
 				E26EB4332E01A62D00518C00 /* Mappers */,
@@ -640,9 +603,6 @@
 		E2B37B362E01658A00E46409 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
-				E29A84C62E02D5640082F24B /* Protocols */,
-				E29A84C02E02D5510082F24B /* DataSources */,
-				E29A84BB2E02D00F0082F24B /* Strategies */,
 				E26EB3F82E01863800518C00 /* Data */,
 				E2B37B3C2E0165B400E46409 /* UI */,
 				E2B37B3B2E0165AD00E46409 /* Domain */,
@@ -845,9 +805,6 @@
 			files = (
 				6D139EDF2C2334E7004DF286 /* WeatherModel.swift in Sources */,
 				E26EB44C2E01A9A200518C00 /* ProtocolMapper.swift in Sources */,
-				E29A84C12E02D5510082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */,
-				E29A84C22E02D5510082F24B /* WeatherRemoteDataSourceImpl.swift in Sources */,
-				E29A84C32E02D5510082F24B /* WeatherCacheDataSourceImpl.swift in Sources */,
 				E26EB42A2E01A5E300518C00 /* WeatherProtocolMapper.swift in Sources */,
 				6D139EE52C2335C0004DF286 /* CityModel.swift in Sources */,
 				E26EB4682E01FA5900518C00 /* NetworkService.swift in Sources */,
@@ -873,8 +830,6 @@
 				E29A84AE2E02CCB10082F24B /* BaseRepositoryImpl.swift in Sources */,
 				E26EB44E2E01A9AB00518C00 /* RemoteDataService.swift in Sources */,
 				6D139F022C233D4E004DF286 /* WeatherAPIConfiguration.swift in Sources */,
-				E29A84C72E02D5640082F24B /* WeatherDataAccessStrategy.swift in Sources */,
-				E29A84C82E02D5640082F24B /* WeatherDataSources.swift in Sources */,
 				E26EB46E2E01FB2600518C00 /* HTTPMethod.swift in Sources */,
 				E26EB40E2E018BE000518C00 /* ForecastModel.swift in Sources */,
 				E2B37B292E01655300E46409 /* SceneDelegate.swift in Sources */,
@@ -899,6 +854,11 @@
 				95D1D6172414486FAAD18585 /* SettingsView.swift in Sources */,
 				E29A84A82E02B8C10082F24B /* NSCacheServiceImpl.swift in Sources */,
 				E26EB40C2E018BC700518C00 /* WeatherConditionModel.swift in Sources */,
+				E29A84D42E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift in Sources */,
+				E29A84D52E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift in Sources */,
+				E29A84D62E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */,
+				E29A84D72E02DCD20082F24B /* WeatherDataSources.swift in Sources */,
+				E29A84D82E02DCD20082F24B /* WeatherDataAccessStrategy.swift in Sources */,
 				E29A849E2E02B89C0082F24B /* SwiftDataContainer.swift in Sources */,
 				E26EB4482E01A97800518C00 /* CacheService.swift in Sources */,
 				892C6B7701614627BBBC784A /* WeatherView.swift in Sources */,
