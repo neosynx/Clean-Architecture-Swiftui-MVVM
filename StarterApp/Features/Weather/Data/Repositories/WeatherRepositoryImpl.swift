@@ -14,17 +14,17 @@ final class WeatherRepositoryImpl: WeatherRepository {
     
     // MARK: - Properties
     
-    private let dataAccessStrategy: WeatherDataAccessStrategy
-    private let cacheDataSource: WeatherCacheDataSource
-    private let persistenceDataSource: WeatherPersistenceDataSource
-    private let remoteDataSource: WeatherRemoteDataSource?
+    private let dataAccessStrategy: any WeatherDataAccessStrategy
+    private let cacheDataSource: any WeatherCacheDataSource
+    private let persistenceDataSource: any WeatherPersistenceDataSource
+    private let remoteDataSource: any WeatherRemoteDataSource
     private let logger: AppLogger
     private let secureStorage: SecureStorageService
     // MARK: - Initialization
     
     init(
         swiftDataContainer: SwiftDataContainer,
-        remoteService: WeatherRemoteService? = nil,
+        remoteService: WeatherRemoteService,
         mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
         strategyType: WeatherDataAccessStrategyType = .cacheFirst,
         logger: AppLogger,
@@ -47,15 +47,13 @@ final class WeatherRepositoryImpl: WeatherRepository {
             logger: logger
         )
         
-        if let remoteService = remoteService {
-            self.remoteDataSource = WeatherRemoteDataSourceImpl(
-                remoteService: remoteService,
-                mapper: mapper,
-                logger: logger
-            )
-        } else {
-            self.remoteDataSource = nil
-        }
+     
+        self.remoteDataSource = WeatherRemoteDataSourceImpl(
+            remoteService: remoteService,
+            mapper: mapper,
+            logger: logger
+        )
+     
         
         // Create strategy using factory
         self.dataAccessStrategy = WeatherDataAccessStrategyFactory.create(type: strategyType)
@@ -68,9 +66,9 @@ final class WeatherRepositoryImpl: WeatherRepository {
     func fetch(for key: String) async throws -> ForecastModel {
         return try await dataAccessStrategy.execute(
             for: key,
-            cache: cacheDataSource,
-            persistence: persistenceDataSource,
-            remote: remoteDataSource,
+            cache: cacheDataSource as! WeatherCacheDataSourceImpl,
+            persistence: persistenceDataSource as! WeatherPersistenceDataSourceImpl,
+            remote: remoteDataSource as? WeatherRemoteDataSourceImpl,
             logger: logger
         )
     }
@@ -98,10 +96,6 @@ final class WeatherRepositoryImpl: WeatherRepository {
     }
     
     func refresh(for key: String) async throws -> ForecastModel {
-        guard let remoteDataSource = remoteDataSource else {
-            throw ServiceError.serviceUnavailable
-        }
-        
         let forecast = try await remoteDataSource.fetch(for: key)
         try await persistenceDataSource.save(forecast)
         try await cacheDataSource.set(forecast, for: key)
@@ -169,7 +163,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
         return RepositoryHealth(
             cacheHealthy: true,
             persistenceHealthy: true,
-            remoteServiceHealthy: remoteDataSource?.isAvailable ?? false,
+            remoteServiceHealthy: remoteDataSource.isAvailable ?? false,
             cacheEntries: cacheStats.entryCount,
             persistedEntries: persistedCities,
             lastUpdated: Date()

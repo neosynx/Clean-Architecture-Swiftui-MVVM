@@ -8,7 +8,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E34DC82F-F255-4CB9-AAC5-AD3CDD41512C"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Features/Weather/Data/Services/WeatherRemoteService.swift"
@@ -126,17 +126,17 @@
             filePath = "StarterApp/Features/Weather/Data/Repositories/WeatherRepositoryImpl.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
-            landmarkName = "WeatherRepositoryImpl"
-            landmarkType = "3">
+            startingLineNumber = "85"
+            endingLineNumber = "85"
+            landmarkName = "delete(for:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "524CF261-6E6E-4236-AAE2-1480F88562BD"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Features/Weather/Data/Services/WeatherRemoteService.swift"
@@ -152,7 +152,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "7A24A4B2-2C1C-4E35-ABE8-DF826D550EF8"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Shared/Services/Base/RemoteServiceImpl.swift"
@@ -184,48 +184,228 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "71897E02-025F-4AD0-93C0-829304CF4C78"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Features/Weather/Data/Repositories/WeatherRepositoryImpl.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
-            landmarkName = "getAllSavedIdentifiers()"
-            landmarkType = "7">
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "delete(for:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E4BE901A-A5EF-44A5-AC30-F8AD9959B8C9"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Features/Weather/Data/Repositories/WeatherRepositoryImpl.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
-            landmarkName = "save(_:)"
-            landmarkType = "7">
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "fetch(for:)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "DB64760B-9E4A-4678-960F-624287DB180A"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "StarterApp/Features/Weather/Data/Repositories/WeatherRepositoryImpl.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "fetch(for:)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9CF8150-6EDA-48AE-805D-F76D759C613E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "48"
+            endingLineNumber = "48"
+            landmarkName = "WeatherPersistenceFirstStrategy"
+            landmarkType = "14">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FDFD0AE7-66AF-46E7-8F71-248563D83AE9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "170"
+            endingLineNumber = "170">
+            <Locations>
+               <Location
+                  uuid = "FDFD0AE7-66AF-46E7-8F71-248563D83AE9 - 70975e3ea3f1ad37"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for StarterApp.WeatherNetworkFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "170"
+                  endingLineNumber = "170">
+               </Location>
+               <Location
+                  uuid = "FDFD0AE7-66AF-46E7-8F71-248563D83AE9 - a5ae4c6ed67c6835"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for StarterApp.WeatherNetworkFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "170"
+                  endingLineNumber = "170">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8F3BD8E2-2806-49FA-AB0F-1D074F9CE84F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "189"
+            endingLineNumber = "189">
+            <Locations>
+               <Location
+                  uuid = "8F3BD8E2-2806-49FA-AB0F-1D074F9CE84F - 330ed784f8788915"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for StarterApp.WeatherNetworkFirstStrategy.execute(for: Swift.String, cache: StarterApp.WeatherCacheDataSource, persistence: StarterApp.WeatherPersistenceDataSource, remote: Swift.Optional&lt;StarterApp.WeatherRemoteDataSource&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+               <Location
+                  uuid = "8F3BD8E2-2806-49FA-AB0F-1D074F9CE84F - 330ed784f8788915"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for StarterApp.WeatherNetworkFirstStrategy.execute(for: Swift.String, cache: StarterApp.WeatherCacheDataSource, persistence: StarterApp.WeatherPersistenceDataSource, remote: Swift.Optional&lt;StarterApp.WeatherRemoteDataSource&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "189"
+                  endingLineNumber = "189">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9083288B-475C-4CD3-8EAC-B7E41B8AFF83"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "226"
+            endingLineNumber = "226">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64196CC9-F58B-413F-96FE-311D34EA7D86"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "execute(for:cache:persistence:remote:logger:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A6DC54D3-068C-4E13-9EC7-6D43DB62BFCE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "60"
+            endingLineNumber = "60"
+            landmarkName = "execute(for:cache:persistence:remote:logger:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A6DC54D3-068C-4E13-9EC7-6D43DB62BFCE - dc34d55981c3f8a9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for StarterApp.WeatherPersistenceFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60">
+               </Location>
+               <Location
+                  uuid = "A6DC54D3-068C-4E13-9EC7-6D43DB62BFCE - 6ce2ba6e11cc84ab"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for StarterApp.WeatherPersistenceFirstStrategy.execute&lt;&#x3c4;_0_0, &#x3c4;_0_1, &#x3c4;_0_2 where &#x3c4;_0_0: StarterApp.CacheDataSource, &#x3c4;_0_1: StarterApp.PersistenceDataSource, &#x3c4;_0_2: StarterApp.RemoteDataSource, &#x3c4;_0_0.Key == Swift.String, &#x3c4;_0_0.Model == StarterApp.ForecastModel, &#x3c4;_0_1.Key == Swift.String, &#x3c4;_0_1.Model == StarterApp.ForecastModel, &#x3c4;_0_2.Key == Swift.String, &#x3c4;_0_2.Model == StarterApp.ForecastModel&gt;(for: Swift.String, cache: &#x3c4;_0_0, persistence: &#x3c4;_0_1, remote: Swift.Optional&lt;&#x3c4;_0_2&gt;, logger: StarterApp.AppLogger) async throws -&gt; StarterApp.ForecastModel"
+                  moduleName = "StarterApp.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/neosynx/Ca/Clean-Architecture-Swiftui-MVVM/StarterApp/Features/Weather/Data/Services/WeatherDataAccessStrategy.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

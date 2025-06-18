@@ -108,7 +108,7 @@ class AppContainer {
     }
     
     // MARK: - Repository Factories
-    private func makeWeatherRepository() -> WeatherRepository {
+    private func makeWeatherRepository() -> any WeatherRepository {
         let logger = loggerFactory.createWeatherLogger()
         
         // Choose configuration based on environment
@@ -118,7 +118,7 @@ class AppContainer {
         let cacheDataSource = makeCacheDataSource(configuration: configuration, logger: logger)
         let persistenceDataSource = makePersistenceDataSource(logger: logger)
         let remoteDataSource = makeRemoteDataSource(logger: logger)
-        let healthService = makeHealthService(
+        _ = makeHealthService(
             cache: cacheDataSource,
             persistence: persistenceDataSource,
             remote: remoteDataSource,
@@ -151,7 +151,7 @@ class AppContainer {
     private func makeCacheDataSource(
         configuration: WeatherRepositoryConfiguration,
         logger: AppLogger
-    ) -> WeatherCacheDataSource {
+    ) -> any WeatherCacheDataSource {
         return WeatherCacheDataSourceImpl(
             countLimit: configuration.cache.countLimit,
             totalCostLimit: configuration.cache.totalCostLimit,
@@ -160,7 +160,7 @@ class AppContainer {
         )
     }
     
-    private func makePersistenceDataSource(logger: AppLogger) -> WeatherPersistenceDataSource {
+    private func makePersistenceDataSource(logger: AppLogger) -> any WeatherPersistenceDataSource {
         return WeatherPersistenceDataSourceImpl(
             persistenceService: swiftDataContainer,
             mapper: WeatherProtocolMapper(),
@@ -168,22 +168,19 @@ class AppContainer {
         )
     }
     
-    private func makeRemoteDataSource(logger: AppLogger) -> WeatherRemoteDataSource? {
-        guard let remoteService = createWeatherRemoteService() else {
-            return nil
-        }
-        
+    private func makeRemoteDataSource(logger: AppLogger) -> (any WeatherRemoteDataSource)? {
+
         return WeatherRemoteDataSourceImpl(
-            remoteService: remoteService,
+            remoteService: createWeatherRemoteService(),
             mapper: WeatherProtocolMapper(),
             logger: logger
         )
     }
     
     private func makeHealthService(
-        cache: WeatherCacheDataSource,
-        persistence: WeatherPersistenceDataSource,
-        remote: WeatherRemoteDataSource?,
+        cache: any WeatherCacheDataSource,
+        persistence: any WeatherPersistenceDataSource,
+        remote: (any WeatherRemoteDataSource)?,
         configuration: WeatherRepositoryConfiguration,
         logger: AppLogger
     ) -> WeatherRepositoryHealthService {
@@ -196,10 +193,8 @@ class AppContainer {
         )
     }
     
-    private func createWeatherRemoteService() -> WeatherRemoteService? {
-        // Only create remote service if not in local-only mode
-        guard !useLocalData else { return nil }
-        
+    private func createWeatherRemoteService() -> WeatherRemoteService {
+ 
         let logger = loggerFactory.createWeatherLogger()
         return WeatherRemoteService(
             networkService: networkService,

@@ -11,21 +11,8 @@ import Foundation
 
 /// Weather-specific data access strategy - bridges to generic protocol
 protocol WeatherDataAccessStrategy: DataAccessStrategy where Key == String, Model == ForecastModel {
-    /// Execute the data access strategy with type-safe dependencies
-    /// - Parameters:
-    ///   - city: The city to fetch weather data for
-    ///   - cache: Cache data source for fast memory access
-    ///   - persistence: Persistence data source for local storage
-    ///   - remote: Remote data source for network data
-    ///   - logger: Logger for debugging and monitoring
-    /// - Returns: The retrieved weather forecast model
-    func execute(
-        for city: String,
-        cache: any WeatherCacheDataSource,
-        persistence: any WeatherPersistenceDataSource,
-        remote: (any WeatherRemoteDataSource)?,
-        logger: AppLogger
-    ) async throws -> ForecastModel
+    // Only inherits the generic execute method from DataAccessStrategy
+    // No additional weather-specific methods needed
 }
 
 // MARK: - Weather Strategy Implementations
@@ -53,42 +40,6 @@ struct WeatherCacheFirstStrategy: WeatherDataAccessStrategy {
             logger: logger
         )
     }
-    
-    func execute(
-        for city: String,
-        cache: any WeatherCacheDataSource,
-        persistence: any WeatherPersistenceDataSource,
-        remote: (any WeatherRemoteDataSource)?,
-        logger: AppLogger
-    ) async throws -> ForecastModel {
-        logger.debug("🏗️ WeatherCacheFirstStrategy.execute for city: \(city)")
-        
-        // Level 1: Check cache (fastest - ~1ms)
-        if let cached = try await cache.get(for: city) {
-            logger.debug("🏗️ WeatherCacheFirstStrategy: Cache HIT")
-            return cached
-        }
-        
-        // Level 2: Check persistence (medium - ~10ms)
-        if let persisted = try await persistence.fetch(for: city) {
-            logger.debug("🏗️ WeatherCacheFirstStrategy: Persistence HIT")
-            // Update cache for next time
-            try await cache.set(persisted, for: city)
-            return persisted
-        }
-        
-        // Level 3: Fetch from network (slowest - ~1000ms)
-        if let remote = remote, remote.isAvailable {
-            logger.debug("🏗️ WeatherCacheFirstStrategy: Falling back to network")
-            let item = try await remote.fetch(for: city)
-            // Save to both cache and persistence
-            try await cache.set(item, for: city)
-            try await persistence.save(item)
-            return item
-        }
-        
-        throw RepositoryError.dataNotFound(city)
-    }
 }
 
 /// Weather-specific persistence-first strategy using generic implementation
@@ -114,42 +65,6 @@ struct WeatherPersistenceFirstStrategy: WeatherDataAccessStrategy {
             logger: logger
         )
     }
-    
-    func execute(
-        for city: String,
-        cache: any WeatherCacheDataSource,
-        persistence: any WeatherPersistenceDataSource,
-        remote: (any WeatherRemoteDataSource)?,
-        logger: AppLogger
-    ) async throws -> ForecastModel {
-        logger.debug("🏗️ WeatherPersistenceFirstStrategy.execute for city: \(city)")
-        
-        // Level 1: Check persistence (reliable)
-        if let persisted = try await persistence.fetch(for: city) {
-            logger.debug("🏗️ WeatherPersistenceFirstStrategy: Persistence HIT")
-            // Update cache
-            try await cache.set(persisted, for: city)
-            return persisted
-        }
-        
-        // Level 2: Check cache
-        if let cached = try await cache.get(for: city) {
-            logger.debug("🏗️ WeatherPersistenceFirstStrategy: Cache HIT")
-            return cached
-        }
-        
-        // Level 3: Network fallback
-        if let remote = remote, remote.isAvailable {
-            logger.debug("🏗️ WeatherPersistenceFirstStrategy: Falling back to network")
-            let item = try await remote.fetch(for: city)
-            // Save to both persistence and cache
-            try await persistence.save(item)
-            try await cache.set(item, for: city)
-            return item
-        }
-        
-        throw RepositoryError.dataNotFound(city)
-    }
 }
 
 /// Weather-specific network-first strategy using generic implementation
@@ -174,47 +89,6 @@ struct WeatherNetworkFirstStrategy: WeatherDataAccessStrategy {
             remote: remote,
             logger: logger
         )
-    }
-    
-    func execute(
-        for city: String,
-        cache: any WeatherCacheDataSource,
-        persistence: any WeatherPersistenceDataSource,
-        remote: (any WeatherRemoteDataSource)?,
-        logger: AppLogger
-    ) async throws -> ForecastModel {
-        logger.debug("🏗️ WeatherNetworkFirstStrategy.execute for city: \(city)")
-        
-        // Level 1: Try network first (fresh data)
-        if let remote = remote, remote.isAvailable {
-            do {
-                logger.debug("🏗️ WeatherNetworkFirstStrategy: Attempting network fetch")
-                let item = try await remote.fetch(for: city)
-                // Save to both cache and persistence
-                try await cache.set(item, for: city)
-                try await persistence.save(item)
-                return item
-            } catch {
-                logger.debug("🏗️ WeatherNetworkFirstStrategy: Network failed, falling back")
-                // Continue to fallbacks
-            }
-        }
-        
-        // Level 2: Check cache
-        if let cached = try await cache.get(for: city) {
-            logger.debug("🏗️ WeatherNetworkFirstStrategy: Cache HIT")
-            return cached
-        }
-        
-        // Level 3: Check persistence
-        if let persisted = try await persistence.fetch(for: city) {
-            logger.debug("🏗️ WeatherNetworkFirstStrategy: Persistence HIT")
-            // Update cache
-            try await cache.set(persisted, for: city)
-            return persisted
-        }
-        
-        throw RepositoryError.dataNotFound(city)
     }
 }
 

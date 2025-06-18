@@ -43,7 +43,6 @@
 		E26EB4432E01A64700518C00 /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4402E01A64700518C00 /* DataService.swift */; };
 		E26EB4452E01A64700518C00 /* FileServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB43D2E01A64700518C00 /* FileServiceImpl.swift */; };
 		E26EB4462E01A64700518C00 /* RemoteServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB43E2E01A64700518C00 /* RemoteServiceImpl.swift */; };
-		E26EB4482E01A97800518C00 /* CacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4472E01A97800518C00 /* CacheService.swift */; };
 		E26EB44A2E01A99A00518C00 /* FileDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4492E01A99A00518C00 /* FileDataService.swift */; };
 		E26EB44C2E01A9A200518C00 /* ProtocolMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB44B2E01A9A200518C00 /* ProtocolMapper.swift */; };
 		E26EB44E2E01A9AB00518C00 /* RemoteDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB44D2E01A9AB00518C00 /* RemoteDataService.swift */; };
@@ -72,9 +71,7 @@
 		E29A84A52E02B8AB0082F24B /* MockDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84A22E02B8AB0082F24B /* MockDataLoader.swift */; };
 		E29A84A62E02B8AB0082F24B /* MockNetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84A32E02B8AB0082F24B /* MockNetworkService.swift */; };
 		E29A84A82E02B8C10082F24B /* NSCacheServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84A72E02B8C10082F24B /* NSCacheServiceImpl.swift */; };
-		E29A84AE2E02CCB10082F24B /* BaseRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */; };
 		E29A84B12E02CCC40082F24B /* BaseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84AF2E02CCC40082F24B /* BaseRepository.swift */; };
-		E29A84B22E02CCC40082F24B /* DataAccessStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */; };
 		E29A84D42E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */; };
 		E29A84D52E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D32E02DCD20082F24B /* WeatherRemoteDataSourceImpl.swift */; };
 		E29A84D62E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A84D22E02DCD20082F24B /* WeatherPersistenceDataSourceImpl.swift */; };
@@ -149,7 +146,6 @@
 		E26EB43D2E01A64700518C00 /* FileServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileServiceImpl.swift; sourceTree = "<group>"; };
 		E26EB43E2E01A64700518C00 /* RemoteServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteServiceImpl.swift; sourceTree = "<group>"; };
 		E26EB4402E01A64700518C00 /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
-		E26EB4472E01A97800518C00 /* CacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheService.swift; sourceTree = "<group>"; };
 		E26EB4492E01A99A00518C00 /* FileDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDataService.swift; sourceTree = "<group>"; };
 		E26EB44B2E01A9A200518C00 /* ProtocolMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolMapper.swift; sourceTree = "<group>"; };
 		E26EB44D2E01A9AB00518C00 /* RemoteDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataService.swift; sourceTree = "<group>"; };
@@ -178,9 +174,7 @@
 		E29A84A22E02B8AB0082F24B /* MockDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataLoader.swift; sourceTree = "<group>"; };
 		E29A84A32E02B8AB0082F24B /* MockNetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkService.swift; sourceTree = "<group>"; };
 		E29A84A72E02B8C10082F24B /* NSCacheServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSCacheServiceImpl.swift; sourceTree = "<group>"; };
-		E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepositoryImpl.swift; sourceTree = "<group>"; };
 		E29A84AF2E02CCC40082F24B /* BaseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepository.swift; sourceTree = "<group>"; };
-		E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataAccessStrategy.swift; sourceTree = "<group>"; };
 		E29A84CF2E02DCD20082F24B /* WeatherCacheDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCacheDataSourceImpl.swift; sourceTree = "<group>"; };
 		E29A84D02E02DCD20082F24B /* WeatherDataAccessStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataAccessStrategy.swift; sourceTree = "<group>"; };
 		E29A84D12E02DCD20082F24B /* WeatherDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataSources.swift; sourceTree = "<group>"; };
@@ -486,7 +480,6 @@
 			isa = PBXGroup;
 			children = (
 				E29A84E72E02F7540082F24B /* GenericDataAccessStrategies.swift */,
-				E29A84AD2E02CCB10082F24B /* BaseRepositoryImpl.swift */,
 				E29A84A72E02B8C10082F24B /* NSCacheServiceImpl.swift */,
 				E26EB43D2E01A64700518C00 /* FileServiceImpl.swift */,
 				E26EB43E2E01A64700518C00 /* RemoteServiceImpl.swift */,
@@ -500,12 +493,10 @@
 				E29A84E32E02F7240082F24B /* GenericDataAccessStrategy.swift */,
 				E29A84E42E02F7240082F24B /* GenericDataSources.swift */,
 				E29A84AF2E02CCC40082F24B /* BaseRepository.swift */,
-				E29A84B02E02CCC40082F24B /* DataAccessStrategy.swift */,
 				E26EB4402E01A64700518C00 /* DataService.swift */,
 				E26EB44D2E01A9AB00518C00 /* RemoteDataService.swift */,
 				E26EB44B2E01A9A200518C00 /* ProtocolMapper.swift */,
 				E26EB4492E01A99A00518C00 /* FileDataService.swift */,
-				E26EB4472E01A97800518C00 /* CacheService.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -845,7 +836,6 @@
 				E26EB46C2E01FA6500518C00 /* AnalyticsServiceImpl.swift in Sources */,
 				6D139EE72C2335E4004DF286 /* TemperatureModel.swift in Sources */,
 				E26EB4762E02030D00518C00 /* LoggerFactory.swift in Sources */,
-				E29A84AE2E02CCB10082F24B /* BaseRepositoryImpl.swift in Sources */,
 				E26EB44E2E01A9AB00518C00 /* RemoteDataService.swift in Sources */,
 				6D139F022C233D4E004DF286 /* WeatherAPIConfiguration.swift in Sources */,
 				E26EB46E2E01FB2600518C00 /* HTTPMethod.swift in Sources */,
@@ -872,7 +862,6 @@
 				E26EB4452E01A64700518C00 /* FileServiceImpl.swift in Sources */,
 				E26EB4462E01A64700518C00 /* RemoteServiceImpl.swift in Sources */,
 				E29A84B12E02CCC40082F24B /* BaseRepository.swift in Sources */,
-				E29A84B22E02CCC40082F24B /* DataAccessStrategy.swift in Sources */,
 				2321F788F2CA4F1B9E27C681 /* RootView.swift in Sources */,
 				E26EB4092E018B3600518C00 /* WeatherApiDTO.swift in Sources */,
 				95D1D6172414486FAAD18585 /* SettingsView.swift in Sources */,
@@ -884,7 +873,6 @@
 				E29A84D72E02DCD20082F24B /* WeatherDataSources.swift in Sources */,
 				E29A84D82E02DCD20082F24B /* WeatherDataAccessStrategy.swift in Sources */,
 				E29A849E2E02B89C0082F24B /* SwiftDataContainer.swift in Sources */,
-				E26EB4482E01A97800518C00 /* CacheService.swift in Sources */,
 				892C6B7701614627BBBC784A /* WeatherView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
