@@ -12,14 +12,9 @@
 protocol ProtocolMapper {
     associatedtype DomainModel
     associatedtype RemoteDTO: Codable
-    associatedtype FileDTO: Codable
-    
+
     /// Map remote DTO to domain model
     func mapToDomain(_ dto: RemoteDTO) -> DomainModel
     
-    /// Map file DTO to domain model
-    func mapToDomain(_ dto: FileDTO) -> DomainModel
-    
-    /// Map domain model to file DTO
-    func mapToFileDTO(_ model: DomainModel) -> FileDTO
+   
 }

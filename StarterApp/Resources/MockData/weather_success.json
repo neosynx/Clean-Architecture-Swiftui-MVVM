@@ -1,0 +1,102 @@
+{
+  "city": {
+    "id": 2643743,
+    "name": "London",
+    "country": "GB",
+    "timezone": 0
+  },
+  "list": [
+    {
+      "dt": 1708617600,
+      "main": {
+        "temp": 15.2,
+        "temp_min": 12.1,
+        "temp_max": 18.3,
+        "feels_like": 16.5,
+        "pressure": 1013,
+        "humidity": 68
+      },
+      "weather": [
+        {
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01d"
+        }
+      ],
+      "wind": {
+        "speed": 3.5,
+        "deg": 180,
+        "gust": 5.2
+      },
+      "clouds": {
+        "all": 0
+      },
+      "visibility": 10000,
+      "sys": {
+        "sunrise": 1708588800,
+        "sunset": 1708632000
+      }
+    },
+    {
+      "dt": 1708704000,
+      "main": {
+        "temp": 18.7,
+        "temp_min": 15.4,
+        "temp_max": 21.2,
+        "feels_like": 19.1,
+        "pressure": 1015,
+        "humidity": 62
+      },
+      "weather": [
+        {
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02d"
+        }
+      ],
+      "wind": {
+        "speed": 2.8,
+        "deg": 220
+      },
+      "clouds": {
+        "all": 25
+      },
+      "visibility": 10000,
+      "sys": {
+        "sunrise": 1708675200,
+        "sunset": 1708718400
+      }
+    },
+    {
+      "dt": 1708790400,
+      "main": {
+        "temp": 22.3,
+        "temp_min": 19.8,
+        "temp_max": 24.7,
+        "feels_like": 22.9,
+        "pressure": 1018,
+        "humidity": 55
+      },
+      "weather": [
+        {
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01d"
+        }
+      ],
+      "wind": {
+        "speed": 4.1,
+        "deg": 190,
+        "gust": 6.3
+      },
+      "clouds": {
+        "all": 5
+      },
+      "visibility": 10000,
+      "sys": {
+        "sunrise": 1708761600,
+        "sunset": 1708804800
+      }
+    }
+  ]
+}

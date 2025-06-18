@@ -10,7 +10,7 @@ import Foundation
 // MARK: - Weather File Service
 
 /// Weather-specific file service implementation
-final class WeatherFileService: FileServiceImpl<String, ForecastFileDTO> {
+final class WeatherFileService: FileServiceImpl<String, WeatherApiDTO> {
     
     // MARK: - Initialization
     
@@ -53,7 +53,7 @@ final class WeatherFileService: FileServiceImpl<String, ForecastFileDTO> {
     // MARK: - Public Save Method
     
     /// Save weather forecast to file
-    func saveForecast(_ forecast: ForecastFileDTO, for city: String) async throws {
+    func saveForecast(_ forecast: WeatherApiDTO, for city: String) async throws {
         try await save(forecast, for: city)
     }
     

@@ -1,0 +1,30 @@
+{
+  "city": {
+    "id": 5128581,
+    "name": "New York",
+    "country": "US"
+  },
+  "list": [
+    {
+      "dt": 1708617600,
+      "main": {
+        "temp": 8.4,
+        "feels_like": 6.2,
+        "pressure": 1020,
+        "humidity": 45
+      },
+      "weather": [
+        {
+          "main": "Snow",
+          "description": "light snow"
+        }
+      ],
+      "wind": {
+        "speed": 5.7
+      },
+      "clouds": {
+        "all": 85
+      }
+    }
+  ]
+}

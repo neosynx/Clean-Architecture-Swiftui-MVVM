@@ -18,6 +18,8 @@ class AppContainer {
     private(set) var networkService: NetworkService
     private(set) var analyticsService: AnalyticsService
     private(set) var loggerFactory: LoggerFactoryImpl
+    private(set) var swiftDataContainer: SwiftDataContainer
+    private(set) var secureStorageService: SecureStorageService
     
     // MARK: - Initialization
     init() {
@@ -70,9 +72,28 @@ class AppContainer {
         )
         self.analyticsService = AnalyticsServiceImpl(environment: env, loggerFactory: loggerFactory)
         
+        // Initialize SwiftData container
+        let appLogger = loggerFactory.createAppLogger()
+        do {
+            let containerConfig: SwiftDataContainer.Configuration = env == .development ? .inMemory : .default
+            self.swiftDataContainer = try SwiftDataContainer(
+                configuration: containerConfig,
+                logger: appLogger
+            )
+        } catch {
+            appLogger.error("Failed to initialize SwiftData container: \(error)")
+            // Fallback to in-memory for safety
+            self.swiftDataContainer = try! SwiftDataContainer(
+                configuration: .inMemory,
+                logger: appLogger
+            )
+        }
+        
+        // Initialize secure storage
+        self.secureStorageService = SecureStorageService(logger: appLogger)
+        
         // Log container initialization
-        let logger = loggerFactory.createAppLogger()
-        logger.info("AppContainer initialized for environment: \(env)")
+        appLogger.info("AppContainer initialized for environment: \(env)")
     }
     
     // MARK: - Store Factories (Feature-specific)
@@ -86,20 +107,17 @@ class AppContainer {
     private func makeWeatherRepository() -> WeatherRepository {
         // Create services based on availability and environment
         let remoteService = createWeatherRemoteService()
-        let fileService = createWeatherFileService()
-        let cacheService = createWeatherCacheService()
         
         // Choose strategy based on environment and preferences
-        let strategy: WeatherRepositoryImpl.DataStrategy = .cacheFirst
+        let strategyType: WeatherDataAccessStrategyType = environment == .development ? .persistenceFirst : .cacheFirst
         
         let logger = loggerFactory.createWeatherLogger()
         return WeatherRepositoryImpl(
+            swiftDataContainer: swiftDataContainer,
             remoteService: remoteService,
-            fileService: fileService,
-            cacheService: cacheService,
-            strategy: strategy,
-            enableFallback: true,
-            logger: logger
+            strategyType: strategyType,
+            logger: logger,
+            secureStorage: secureStorageService
         )
     }
     
@@ -115,21 +133,29 @@ class AppContainer {
         )
     }
     
-    private func createWeatherFileService() -> WeatherFileService? {
-        // Always create file service for local storage
-        let logger = loggerFactory.createWeatherLogger()
-        return WeatherFileService(logger: logger)
+    // MARK: - Configuration Methods
+    
+    /// Configure API key securely
+    func configureAPIKey(_ apiKey: String, for service: String) async {
+        do {
+            try await secureStorageService.storeAPIKey(apiKey, for: service)
+            let logger = loggerFactory.createAppLogger()
+            logger.info("API key configured for service: \(service)")
+        } catch {
+            let logger = loggerFactory.createAppLogger()
+            logger.error("Failed to store API key: \(error)")
+        }
     }
     
-    private func createWeatherCacheService() -> CacheServiceImpl<String, ForecastFileDTO> {
-        // Cache configuration based on environment
-        let expirationInterval: TimeInterval = environment == .development ? 300 : 600 // 5 min dev, 10 min prod
-        let maxEntries = environment == .development ? 20 : 50
-        
-        return CacheServiceImpl<String, ForecastFileDTO>(
-            expirationInterval: expirationInterval,
-            maxEntries: maxEntries
-        )
+    /// Get stored API key
+    func getAPIKey(for service: String) async -> String? {
+        do {
+            return try await secureStorageService.retrieveAPIKey(for: service)
+        } catch {
+            let logger = loggerFactory.createAppLogger()
+            logger.error("Failed to retrieve API key: \(error)")
+            return nil
+        }
     }
     
     // MARK: - Environment Management

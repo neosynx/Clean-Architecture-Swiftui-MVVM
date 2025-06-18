@@ -1,0 +1,16 @@
+{
+  "error": {
+    "code": "CITY_NOT_FOUND",
+    "message": "City not found. Please check the city name and try again.",
+    "details": {
+      "requested_city": "InvalidCity",
+      "suggestions": [
+        "London",
+        "Paris",
+        "New York",
+        "Tokyo"
+      ]
+    },
+    "timestamp": "2024-06-18T10:30:00Z"
+  }
+}

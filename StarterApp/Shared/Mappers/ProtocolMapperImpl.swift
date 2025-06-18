@@ -10,23 +10,14 @@ import Foundation
 // MARK: - Generic Protocol Mapper
 
 /// Base generic protocol mapper with common functionality
-class ProtocolMapperImpl<DomainModel, RemoteDTO: Codable, FileDTO: Codable> {
+class ProtocolMapperImpl<DomainModel, RemoteDTO: Codable> {
     typealias DomainModelType = DomainModel
     typealias RemoteDTOType = RemoteDTO
-    typealias FileDTOType = FileDTO
-    
+
     // MARK: - Protocol Requirements (Override in subclasses)
     
     func mapToDomain(_ dto: RemoteDTO) -> DomainModel {
         fatalError("mapToDomain(RemoteDTO) must be overridden in subclass")
-    }
-    
-    func mapToDomain(_ dto: FileDTO) -> DomainModel {
-        fatalError("mapToDomain(FileDTO) must be overridden in subclass")
-    }
-    
-    func mapToFileDTO(_ model: DomainModel) -> FileDTO {
-        fatalError("mapToFileDTO must be overridden in subclass")
     }
     
     // MARK: - Common Utilities

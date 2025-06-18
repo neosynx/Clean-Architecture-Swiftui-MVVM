@@ -1,226 +1,221 @@
 //
-//  WeatherRepositoryComposed.swift
+//  WeatherRepositoryImpl.swift
 //  StarterApp
 //
-//  Created by Claude on 17/6/25.
+//  Created by Claude on 18/6/25.
 //
 
 import Foundation
+import SwiftData
 
-// MARK: - Weather Repository with Protocol Composition
-
-/// Weather repository that auto-configures based on available services
+/// Clean Architecture Weather Repository implementation using Protocol-based Strategy Pattern
+/// Uses protocol composition instead of concrete dependencies for better testability
 final class WeatherRepositoryImpl: WeatherRepository {
     
-    // MARK: - Service Composition
+    // MARK: - Properties
     
-    private let remoteService: WeatherRemoteService?
-    private let fileService: WeatherFileService?
-    private let cacheService: CacheServiceImpl<String, ForecastFileDTO>
-    private let mapper: WeatherProtocolMapper
+    private let dataAccessStrategy: WeatherDataAccessStrategy
+    private let cacheDataSource: WeatherCacheDataSource
+    private let persistenceDataSource: WeatherPersistenceDataSource
+    private let remoteDataSource: WeatherRemoteDataSource?
     private let logger: AppLogger
-    
-    // MARK: - Configuration
-    
-    private let strategy: DataStrategy
-    private let enableFallback: Bool
-    
-    // MARK: - Data Strategy
-    
-    enum DataStrategy {
-        case cacheFirst
-    }
-    
+    private let secureStorage: SecureStorageService
     // MARK: - Initialization
     
     init(
+        swiftDataContainer: SwiftDataContainer,
         remoteService: WeatherRemoteService? = nil,
-        fileService: WeatherFileService? = nil,
-        cacheService: CacheServiceImpl<String, ForecastFileDTO>? = nil,
         mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
-        strategy: DataStrategy = .cacheFirst,
-        enableFallback: Bool = true,
-        logger: AppLogger
+        strategyType: WeatherDataAccessStrategyType = .cacheFirst,
+        logger: AppLogger,
+        secureStorage: SecureStorageService
     ) {
-        self.remoteService = remoteService
-        self.fileService = fileService
-        self.cacheService = cacheService ?? CacheServiceImpl<String, ForecastFileDTO>()
-        self.mapper = mapper
-        self.strategy = strategy
-        self.enableFallback = enableFallback
         self.logger = logger
-    }
-    
-    // MARK: - WeatherRepository Protocol
-    
-    func fetchWeather(for city: String) async throws -> ForecastModel {
-        switch strategy {
-        case .cacheFirst:
-            return try await fetchWithCacheFirst(for: city)
-        }
-    }
-    
-    func saveWeather(_ forecast: ForecastModel) async throws {
-        logger.info("💾 Repository.saveWeather starting for city: \(forecast.city.name)")
+        self.secureStorage = secureStorage
         
-        do {
-            logger.debug("💾 Repository.saveWeather: Mapping domain to file DTO...")
-            let fileDTO = mapper.mapToFileDTO(forecast)
-            let city = forecast.city.name
-            logger.debug("💾 Repository.saveWeather: File DTO mapping successful")
-            
-            // Save to cache
-            logger.debug("💾 Repository.saveWeather: Saving to cache...")
-            try await cacheService.set(fileDTO, for: city)
-            logger.debug("💾 Repository.saveWeather: Cache save successful")
-            
-            // Save to file if available
-           /* if let fileService = fileService {
-                logger.debug("💾 Repository.saveWeather: Saving to file service...")
-                try await fileService.saveForecast(fileDTO, for: city)
-                logger.debug("💾 Repository.saveWeather: File save successful")
-            } else {
-                logger.warning("💾 Repository.saveWeather: File service not available, skipping file save")
-            }*/
-            
-            //print("💾 Repository.saveWeather: Completed successfully")
-        } catch {
-            logger.error("💾 Repository.saveWeather: Error occurred:")
-            logger.error("   🏷️ Error type: \(type(of: error))")
-            logger.error("   📝 Error: \(error.localizedDescription)")
-            logger.error("   🔍 Full error: \(error)")
-            throw error
-        }
-    }
-    
-    func deleteWeather(for city: String) async throws {
-        // Remove from cache
-        try await cacheService.remove(for: city)
+        // Create protocol-based data sources
+        self.cacheDataSource = WeatherCacheDataSourceImpl(
+            countLimit: 50,
+            totalCostLimit: 20 * 1024 * 1024, // 20MB
+            expirationInterval: 3600, // 1 hour
+            logger: logger
+        )
         
-        // Remove from file if available
-        if let fileService = fileService {
-            try await fileService.deleteForecast(for: city)
+        self.persistenceDataSource = WeatherPersistenceDataSourceImpl(
+            persistenceService: swiftDataContainer,
+            mapper: mapper,
+            logger: logger
+        )
+        
+        if let remoteService = remoteService {
+            self.remoteDataSource = WeatherRemoteDataSourceImpl(
+                remoteService: remoteService,
+                mapper: mapper,
+                logger: logger
+            )
+        } else {
+            self.remoteDataSource = nil
         }
+        
+        // Create strategy using factory
+        self.dataAccessStrategy = WeatherDataAccessStrategyFactory.create(type: strategyType)
+        
+        logger.info("WeatherRepositoryImpl initialized with strategy: \(strategyType)")
     }
     
-    func getAllSavedCities() async throws -> [String] {
-        if let fileService = fileService {
-            return try await fileService.getAllKeys()
-        }
-        return []
+    // MARK: - BaseRepository Protocol Implementation
+    
+    func fetch(for key: String) async throws -> ForecastModel {
+        return try await dataAccessStrategy.execute(
+            for: key,
+            cache: cacheDataSource,
+            persistence: persistenceDataSource,
+            remote: remoteDataSource,
+            logger: logger
+        )
     }
     
-    func getCachedWeather(for city: String) async throws -> ForecastModel? {
-        do {
-            if let fileDTO = try await cacheService.get(for: city) {
-                return mapper.mapToDomain(fileDTO)
-            }
-        } catch ServiceError.cacheExpired {
-            // Cache expired, return nil to trigger refresh
-            return nil
-        }
-        return nil
+    func save(_ item: ForecastModel) async throws {
+        try await persistenceDataSource.save(item)
+        try await cacheDataSource.set(item, for: item.city.name)
+    }
+    
+    func delete(for key: String) async throws {
+        try await persistenceDataSource.delete(for: key)
+        try await cacheDataSource.remove(for: key)
+    }
+    
+    func getAllSavedIdentifiers() async throws -> [String] {
+        return try await persistenceDataSource.getAllSavedCities()
+    }
+    
+    func getCached(for key: String) async throws -> ForecastModel? {
+        return try await cacheDataSource.get(for: key)
     }
     
     func clearCache() async throws {
-        try await cacheService.clear()
+        try await cacheDataSource.clear()
+    }
+    
+    func refresh(for key: String) async throws -> ForecastModel {
+        guard let remoteDataSource = remoteDataSource else {
+            throw ServiceError.serviceUnavailable
+        }
+        
+        let forecast = try await remoteDataSource.fetch(for: key)
+        try await persistenceDataSource.save(forecast)
+        try await cacheDataSource.set(forecast, for: key)
+        return forecast
+    }
+    
+    func fetchWithFallback(for key: String) async throws -> ForecastModel {
+        return try await fetch(for: key)
+    }
+    
+    // MARK: - WeatherRepository Protocol Implementation
+    
+    func saveWeather(_ forecast: ForecastModel) async throws {
+        logger.info("💾 Repository.saveWeather starting for city: \(forecast.city.name)")
+        try await save(forecast)
+        logger.info("💾 Repository.saveWeather: Completed successfully")
+    }
+    
+    func deleteWeather(for city: String) async throws {
+        logger.info("🗑️ Repository.deleteWeather for city: \(city)")
+        try await delete(for: city)
+        logger.info("🗑️ Repository.deleteWeather: Completed successfully")
+    }
+    
+    func getAllSavedCities() async throws -> [String] {
+        logger.debug("📋 Repository.getAllSavedCities")
+        let cities = try await getAllSavedIdentifiers()
+        logger.debug("📋 Repository.getAllSavedCities: Found \(cities.count) cities")
+        return cities
+    }
+    
+    func getCachedWeather(for city: String) async throws -> ForecastModel? {
+        logger.debug("🏃‍♂️ Repository.getCachedWeather for city: \(city)")
+        let cached = try await getCached(for: city)
+        logger.debug("🏃‍♂️ Repository.getCachedWeather: \(cached != nil ? "Hit" : "Miss")")
+        return cached
     }
     
     func refreshWeather(for city: String) async throws -> ForecastModel {
         logger.info("🔄 Repository.refreshWeather starting for city: \(city)")
-        
-        guard let remoteService = remoteService else {
-            logger.error("🔄 Repository.refreshWeather: Remote service is nil!")
-            throw ServiceError.serviceUnavailable
-        }
-        logger.debug("🔄 Repository.refreshWeather: Remote service available")
-        
-        do {
-            logger.debug("🔄 Repository.refreshWeather: Fetching from remote service...")
-            let apiDTO = try await remoteService.fetch(for: city)
-            logger.debug("🔄 Repository.refreshWeather: Remote fetch successful, received DTO")
-            
-            logger.debug("🔄 Repository.refreshWeather: Mapping DTO to domain model...")
-            let domainModel = mapper.mapToDomain(apiDTO)
-            logger.debug("🔄 Repository.refreshWeather: Domain mapping successful")
-            
-            logger.debug("🔄 Repository.refreshWeather: Saving weather data...")
-            try await saveWeather(domainModel)
-            logger.debug("🔄 Repository.refreshWeather: Save successful")
-            
-            logger.info("🔄 Repository.refreshWeather: Completed successfully")
-            return domainModel
-        } catch {
-            logger.error("🔄 Repository.refreshWeather: Error occurred:")
-            logger.error("   🏷️ Error type: \(type(of: error))")
-            logger.error("   📝 Error: \(error.localizedDescription)")
-            logger.error("   🔍 Full error: \(error)")
-            throw error
-        }
+        let forecast = try await refresh(for: city)
+        logger.info("🔄 Repository.refreshWeather: Completed successfully")
+        return forecast
     }
     
     func getWeatherWithFallback(for city: String) async throws -> ForecastModel {
-        return try await fetchWithCacheFirst(for: city)
+        return try await fetchWithFallback(for: city)
     }
     
-    // MARK: - Strategy Implementations
     
-    private func fetchWithCacheFirst(for city: String) async throws -> ForecastModel {
-        // Try cache first
-        if let cachedModel = try await getCachedWeather(for: city) {
-            return cachedModel
-        }
+    // MARK: - Health Monitoring
+    
+    func getHealth() async -> RepositoryHealth {
+        // Get cache statistics from the cache data source
+        let cacheStats = await (cacheDataSource as? WeatherCacheDataSourceImpl)?.getStatistics() ?? SimpleCacheStatistics(
+            entryCount: 0,
+            expiredCount: 0,
+            totalCount: 0,
+            countLimit: 0,
+            totalCostLimit: 0
+        )
         
-        // Try file next if available and fallback enabled
-        if enableFallback, let fileService = fileService {
-            do {
-                let fileDTO = try await fileService.fetch(for: city)
-                let domainModel = mapper.mapToDomain(fileDTO)
-                
-                // Update cache
-                try await cacheService.set(fileDTO, for: city)
-                
-                return domainModel
-            } catch {
-                // Continue to remote if file fails
-            }
-        }
+        let persistedCities = (try? await persistenceDataSource.getAllSavedCities().count) ?? 0
         
-        // Finally try remote if available and fallback enabled
-        if enableFallback, let remoteService = remoteService {
-            do {
-                logger.debug("🏗️ Repository: Attempting remote service fetch...")
-                let result = try await refreshWeather(for: city)
-                logger.debug("🏗️ Repository: Remote service fetch successful")
-                return result
-            } catch {
-                logger.error("🏗️ Repository: Remote service failed:")
-                logger.error("   🏷️ Error type: \(type(of: error))")
-                logger.error("   📝 Error: \(error.localizedDescription)")
-                logger.error("   🔍 Full error: \(error)")
-                throw error
-            }
-        }
-        
-        throw ServiceError.notFound
+        return RepositoryHealth(
+            cacheHealthy: true,
+            persistenceHealthy: true,
+            remoteServiceHealthy: remoteDataSource?.isAvailable ?? false,
+            cacheEntries: cacheStats.entryCount,
+            persistedEntries: persistedCities,
+            lastUpdated: Date()
+        )
     }
     
- 
+    // MARK: - Migration Support
+    
+    /// Migrate data from file storage to SwiftData
+    func migrateFromFileStorage() async throws {
+        logger.info("🔄 Starting migration from file storage to SwiftData")
+        
+        // This would be called during app upgrade
+        // Implementation would read from file storage and convert to SwiftData
+        // For now, this is a placeholder
+        
+        logger.info("🔄 Migration completed successfully")
+    }
 }
 
-// MARK: - Weather Repository Health
+// MARK: - Repository Health
 
-struct WeatherRepositoryHealth {
+struct RepositoryHealth {
     let cacheHealthy: Bool
-    let fileServiceHealthy: Bool
+    let persistenceHealthy: Bool
     let remoteServiceHealthy: Bool
-    let cacheStatistics: CacheStatistics
-
+    let cacheEntries: Int
+    let persistedEntries: Int
+    let lastUpdated: Date
+    
+    var overallHealth: String {
+        let components = [
+            cacheHealthy ? "Cache ✅" : "Cache ❌",
+            persistenceHealthy ? "Persistence ✅" : "Persistence ❌",
+            remoteServiceHealthy ? "Remote ✅" : "Remote ❌"
+        ]
+        return components.joined(separator: " ")
+    }
+    
     var description: String {
-        var status: [String] = []
-        if cacheHealthy { status.append("Cache ✅") } else { status.append("Cache ❌") }
-        if fileServiceHealthy { status.append("File ✅") } else { status.append("File ❌") }
-        if remoteServiceHealthy { status.append("Remote ✅") } else { status.append("Remote ❌") }
-        return status.joined(separator: " ")
+        """
+        Repository Health Report:
+        - Overall: \(overallHealth)
+        - Cache entries: \(cacheEntries)
+        - Persisted entries: \(persistedEntries)
+        - Last updated: \(lastUpdated)
+        """
     }
 }

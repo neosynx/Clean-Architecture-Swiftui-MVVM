@@ -15,23 +15,10 @@ class WeatherStore {
     var errorMessage: String?
     var selectedCity = ""
     var savedCities: [String] = []
-    var dataSource: DataSourceType = .remote
     
     // MARK: - Dependencies
     private let weatherRepository: WeatherRepository
     private let logger: AppLogger
-    
-    // MARK: - Data Source Configuration
-    enum DataSourceType: String, CaseIterable {
-        case remote = "Remote API"
-        case local = "Local Storage"
-        case cache = "Memory Cache"
-        case offline = "Offline Mode"
-        
-        var description: String {
-            return self.rawValue
-        }
-    }
     
     // MARK: - Initialization
     init(weatherRepository: WeatherRepository, logger: AppLogger) {
@@ -39,7 +26,21 @@ class WeatherStore {
         self.logger = logger
         logger.info("WeatherStore initialized")
         Task {
-            await loadSavedCities()
+            await initializeStore()
+        }
+    }
+    
+    // MARK: - Initialization Helper
+    @MainActor
+    private func initializeStore() async {
+        // Load saved cities first
+        await loadSavedCities()
+        
+        // Auto-load weather for the most recent city if available
+        if let lastCity = savedCities.first {
+            logger.debug("Auto-loading weather for last saved city: \(lastCity)")
+            selectedCity = lastCity
+            await fetchWeather(for: lastCity)
         }
     }
     
@@ -59,7 +60,11 @@ class WeatherStore {
         
         do {
             let result = try await logger.logExecutionTime(operation: "Fetch weather for \(city)") {
-                return try await performFetch(for: city, forceRefresh: forceRefresh)
+                if forceRefresh {
+                    return try await weatherRepository.refreshWeather(for: city)
+                } else {
+                    return try await weatherRepository.fetchWeather(for: city)
+                }
             }
             forecast = result
             logger.info("Weather data loaded successfully for \(city)")
@@ -151,12 +156,6 @@ class WeatherStore {
         selectedCity = ""
     }
     
-    // MARK: - Data Source Strategy
-    func switchDataSource(to newSource: DataSourceType) {
-        let oldSource = dataSource
-        dataSource = newSource
-        logger.logUserAction("Switch Data Source", details: ["from": oldSource.rawValue, "to": newSource.rawValue])
-    }
     
     // MARK: - Private Methods
     
@@ -181,33 +180,4 @@ class WeatherStore {
         }
     }
     
-    private func performFetch(for city: String, forceRefresh: Bool) async throws -> ForecastModel {
-        switch dataSource {
-        case .remote:
-            if forceRefresh {
-                return try await weatherRepository.refreshWeather(for: city)
-            } else {
-                return try await weatherRepository.fetchWeather(for: city)
-            }
-            
-        case .local:
-            if let localWeather = try await weatherRepository.getCachedWeather(for: city) {
-                return localWeather
-            } else {
-                // Fallback to remote if no local data
-                return try await weatherRepository.fetchWeather(for: city)
-            }
-            
-        case .cache:
-            if let cachedWeather = try await weatherRepository.getCachedWeather(for: city) {
-                return cachedWeather
-            } else {
-                // Fallback to remote if no cached data
-                return try await weatherRepository.fetchWeather(for: city)
-            }
-            
-        case .offline:
-            return try await weatherRepository.getWeatherWithFallback(for: city)
-        }
-    }
 }

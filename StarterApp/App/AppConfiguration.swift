@@ -20,5 +20,9 @@ class AppConfiguration {
     var localWeatherDataFilename: String {
         return "weather_data"
     }
+    
+    var loadWebServiceFromFilesystem: Bool {
+        return false
+    }
 }
 
