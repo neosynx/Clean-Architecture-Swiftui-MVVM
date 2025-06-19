@@ -4,10 +4,11 @@
 This is a reference Clean Architecture iOS app built with SwiftUI targeting iOS 17.0+, implementing modern patterns with Repository Pattern and DTO separation for maintainable, testable, and scalable code.
 
 ## Tech Stack
-- **Framework**: SwiftUI + CoreData + Combine
+- **Framework**: SwiftUI + SwiftData 
 - **Language**: Swift 5.9+
-- **Architecture**: Clean Architecture + MVVM with @Observable
-- **Data Layer**: Repository Pattern with DTO Mapping
+- **Architecture**: Clean Architecture + Solid 
+- **Data Layer**: Repository Pattern with DTO Mapping + Strategy Pattern
+- **Design Patterns**: Protocol-Oriented Design, Strategy Pattern, Repository Pattern
 - **Concurrency**: Swift async/await + Actors
 - **Target**: iOS 17.0+
 
@@ -38,11 +39,20 @@ This is a reference Clean Architecture iOS app built with SwiftUI targeting iOS 
 │  ┌─────────────┐    ┌─────────────────────┐ │
 │  │     DTOs    │◄──►│ Repository Impl     │ │
 │  │  API/File   │    │   + Mappers         │ │
-│  └─────────────┘    └─────────────────────┘ │
-│  ┌─────────────┐    ┌─────────────────────┐ │
-│  │ DataSources │    │     CoreData        │ │
-│  │Remote/Local │    │  File Storage       │ │
-│  └─────────────┘    └─────────────────────┘ │
+│  └─────────────┘    └──────────┬──────────┘ │
+│                                 │             │
+│  ┌─────────────────────────────▼──────────┐ │
+│  │        Data Access Strategy            │ │
+│  │  (CacheFirst/NetworkFirst/etc)         │ │
+│  └──────────────┬─────────────────────────┘ │
+│                 │                            │
+│  ┌──────────────▼─────────────────────────┐ │
+│  │     Protocol-Based DataSources         │ │
+│  │  ┌─────────┐ ┌──────────┐ ┌─────────┐ │ │
+│  │  │ Remote  │ │  Cache   │ │SwiftData│ │ │
+│  │  │   API   │ │ Memory   │ │Persisted│ │ │
+│  │  └─────────┘ └──────────┘ └─────────┘ │ │
+│  └─────────────────────────────────────────┘ │
 └─────────────────────────────────────────────┘
 ```
 
@@ -71,20 +81,28 @@ StarterApp/
 │       │       └── WeatherConditionModel.swift
 │       └── Data/
 │           ├── DTOs/             # Data Transfer Objects (Codable)
-│           │   ├── WeatherApiDTO.swift
-│           │   └── WeatherFileDTO.swift
+│           │   └── WeatherApiDTO.swift
 │           ├── Mappers/          # DTO ↔ Domain Model converters
-│           │   └── WeatherDomainMapper.swift
+│           │   └── WeatherProtocolMapper.swift
 │           ├── Repositories/     # Repository implementations
 │           │   ├── WeatherRepository.swift
-│           │   └── WeatherRepositoryImpl.swift
-│           ├── DataSources/      # Remote/Local/Cache data sources
-│           │   ├── WeatherDataSource.swift
-│           │   ├── WeatherRemoteDataSourceImpl.swift
-│           │   ├── WeatherFileDataSourceImpl.swift
-│           │   └── WeatherMemoryCacheDataSource.swift
-│           └── CoreData/         # Core Data models
-│               └── WeatherDataModel.xcdatamodeld
+│           │   ├── WeatherRepositoryImpl.swift
+│           │   ├── WeatherRepositoryConfiguration.swift
+│           │   └── WeatherRepositoryHealthService.swift
+│           ├── Services/         # Domain services and errors
+│           │   ├── DomainErrors/
+│           │   │   └── WeatherDomainError.swift
+│           │   ├── Protocols/    # Protocol-based data sources
+│           │   │   ├── WeatherCacheDataSource.swift
+│           │   │   ├── WeatherPersistenceDataSource.swift
+│           │   │   └── WeatherRemoteDataSource.swift
+│           │   └── WeatherDataAccessStrategy.swift
+│           ├── DataSources/      # Concrete implementations
+│           │   ├── WeatherCacheDataSourceImpl.swift
+│           │   ├── WeatherPersistenceDataSourceImpl.swift
+│           │   └── WeatherRemoteDataSourceImpl.swift
+│           └── SwiftData/        # SwiftData models
+│               └── WeatherEntity.swift
 ├── Shared/
 │   ├── Infrastructure/           # Network, Storage utilities
 │   │   ├── Network/
@@ -93,6 +111,12 @@ StarterApp/
 │   │   │   └── WeatherAPIConfiguration.swift
 │   │   └── Storage/
 │   │       └── JSONLoader.swift
+│   ├── Services/                 # Generic base protocols
+│   │   └── Protocols/
+│   │       ├── BaseRepository.swift
+│   │       ├── CacheDataSource.swift
+│   │       ├── PersistenceDataSource.swift
+│   │       └── RemoteDataSource.swift
 │   ├── Extensions/               # Utility extensions
 │   │   └── Extension+Date.swift
 │   └── UI/                       # Reusable UI components
@@ -116,6 +140,10 @@ StarterApp/
 8. **Performance**: Actor-based concurrency for thread-safe operations
 9. **Maintainability**: Clear boundaries and single responsibility principle
 10. **Future-Proof**: Easy to extend with new features and data sources
+11. **Strategy Pattern**: Flexible data access strategies (CacheFirst, NetworkFirst, etc.)
+12. **Protocol Composition**: Generic base protocols enable code reuse across features
+13. **Health Monitoring**: Built-in repository health checking and diagnostics
+14. **SwiftData Integration**: Modern persistence with type-safe queries
 
 ## 📋 Development Rules
 
@@ -129,6 +157,10 @@ StarterApp/
 - Use Actors for thread-safe shared state
 - Follow protocol segregation for data sources
 - Write comprehensive tests for mappers and repositories
+- Use protocol composition with generic base protocols
+- Implement data access strategies for flexible data fetching
+- Use SwiftData for persistence with proper entity modeling
+- Configure repositories with appropriate strategies based on use case
 
 ### ❌ DON'T:
 - Reference DTOs in Views or Stores
@@ -158,11 +190,24 @@ UI Layer (Views)
     ↓ @Environment injection
 Store Layer (@Observable) ──→ Domain Models Only
     ↓ Repository protocol
-Repository Implementation ──→ DTO Mapping Logic
-    ↓ DataSource protocols  
-Multiple Data Sources ──→ DTOs (API/File/Cache)
+Repository Implementation ──→ Configuration + Health Service
+    ↓ Data Access Strategy
+Strategy (CacheFirst/NetworkFirst) ──→ Protocol-Based DataSources
+    ↓ Generic protocols (Cache/Persistence/Remote)
+Concrete DataSources ──→ DTOs (API/SwiftData/Memory)
     ↓ Mappers
 Domain Models ←──── Pure Swift Types
 ```
+
+## 🔄 Data Access Strategies
+
+The repository uses configurable strategies to determine data fetching behavior:
+
+- **CacheFirst**: Check memory cache → persistence → network
+- **NetworkFirst**: Fetch from network → update cache/persistence
+- **PersistenceFirst**: Check SwiftData → network if needed
+- **NetworkOnly**: Always fetch fresh data from API
+
+Strategies can be configured per repository instance based on use case requirements.
 
 This architecture ensures **maintainable, testable, and scalable iOS applications** with clear separation of concerns and modern Swift patterns.
