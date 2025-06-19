@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FactoryKit
+import codeartis_logging
 
 @main
 struct AppRoot: App {
@@ -18,7 +19,7 @@ struct AppRoot: App {
     
     init() {
         let appContainer = AppContainerImpl()
-        let logger = appContainer.loggerFactory.createAppLogger()
+        let logger = appContainer.loggerFactory.createLogger(category: "app")
         _container = State(initialValue: appContainer)
         _lifecycleManager = State(initialValue: AppLifecycleManager(logger: logger))
     }
@@ -42,7 +43,7 @@ struct AppRoot: App {
     }
     
     private func handleScenePhaseChange(_ phase: ScenePhase) {
-        let logger = container.loggerFactory.createAppLogger()
+        let logger = container.loggerFactory.createLogger(category: "app")
         
         switch phase {
         case .active:

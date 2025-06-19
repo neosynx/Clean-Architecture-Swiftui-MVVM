@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Cache Service Protocol
 
@@ -58,7 +59,7 @@ final class NSCacheServiceImpl<Key: Hashable, Value: AnyObject>: NSObject, Cache
     
     private let cache = NSCache<NSString, CacheEntry>()
     private let keyTransformer: (Key) -> NSString
-    private let logger: AppLogger?
+    private let logger: CodeartisLogger?
     private let expirationInterval: TimeInterval
     
     // Serial queue for thread-safe operations on metadata
@@ -90,7 +91,7 @@ final class NSCacheServiceImpl<Key: Hashable, Value: AnyObject>: NSObject, Cache
         totalCostLimit: Int = 50 * 1024 * 1024, // 50MB default
         expirationInterval: TimeInterval = 3600, // 1 hour default
         keyTransformer: @escaping (Key) -> NSString = { NSString(string: "\($0)") },
-        logger: AppLogger? = nil
+        logger: CodeartisLogger? = nil
     ) {
         self.keyTransformer = keyTransformer
         self.logger = logger
@@ -277,7 +278,7 @@ final class DomainModelCache<Key: Hashable, Model> {
         countLimit: Int = 100,
         totalCostLimit: Int = 50 * 1024 * 1024,
         expirationInterval: TimeInterval = 3600,
-        logger: AppLogger? = nil
+        logger: CodeartisLogger? = nil
     ) {
         self.cache = NSCacheServiceImpl(
             countLimit: countLimit,

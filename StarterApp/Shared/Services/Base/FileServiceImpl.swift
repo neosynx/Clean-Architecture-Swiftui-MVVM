@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Generic File Service
 
@@ -21,14 +22,14 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
      let fileManager = FileManager.default
      let encoder: JSONEncoder
      let decoder: JSONDecoder
-     let logger: AppLogger
+     let logger: CodeartisLogger
     
     // MARK: - Initialization
     
     init(
         directoryName: String,
         fileExtension: String = "json",
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.directoryName = directoryName
         self.fileExtension = fileExtension
@@ -206,7 +207,7 @@ final class MockFileService<Key: Hashable, Value: Codable>: FileDataService {
     
     private var storage: [Key: Value] = [:]
     private var shouldFailOperations = false
-    private let logger: AppLogger?
+    private let logger: CodeartisLogger?
     
     // MARK: - Call Tracking
     
@@ -223,7 +224,7 @@ final class MockFileService<Key: Hashable, Value: Codable>: FileDataService {
     
     // MARK: - Initialization
     
-    init(logger: AppLogger? = nil) {
+    init(logger: CodeartisLogger? = nil) {
         self.logger = logger
     }
     

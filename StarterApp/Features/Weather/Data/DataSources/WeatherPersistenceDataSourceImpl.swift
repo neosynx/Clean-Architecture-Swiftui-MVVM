@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import codeartis_logging
 
 /// Weather persistence data source implementation using SwiftData
 final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
@@ -15,14 +16,14 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
     
     private let persistenceService: SwiftDataContainer
     private let mapper: WeatherProtocolMapper
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Initialization
     
     init(
         persistenceService: SwiftDataContainer,
         mapper: WeatherProtocolMapper,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.persistenceService = persistenceService
         self.mapper = mapper

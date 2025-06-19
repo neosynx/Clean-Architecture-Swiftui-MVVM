@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import codeartis_logging
 
 /// Clean Architecture Weather Repository implementation using Protocol-based Strategy Pattern
 /// Uses protocol composition instead of concrete dependencies for better testability
@@ -18,7 +19,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
     private let cacheDataSource: any WeatherCacheDataSource
     private let persistenceDataSource: any WeatherPersistenceDataSource
     private let remoteDataSource: any WeatherRemoteDataSource
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     private let secureStorage: SecureStorageService
     // MARK: - Initialization
     
@@ -27,7 +28,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
         remoteService: WeatherRemoteService,
         mapper: WeatherProtocolMapper,
         strategyType: WeatherDataAccessStrategyType = .cacheFirst,
-        logger: AppLogger,
+        logger: CodeartisLogger,
         secureStorage: SecureStorageService
     ) {
         self.logger = logger

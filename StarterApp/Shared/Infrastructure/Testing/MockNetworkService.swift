@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 /// Mock implementation of NetworkService for testing and development
 /// Loads responses from JSON files instead of making real network calls
@@ -14,7 +15,7 @@ final class MockNetworkService: NetworkService {
     // MARK: - Properties
     
     private let mockDataLoader: MockDataLoader
-    private let logger: AppLogger?
+    private let logger: CodeartisLogger?
     
     // Test configuration
     var currentScenario: MockDataLoader.MockScenario = .weatherSuccess
@@ -35,7 +36,7 @@ final class MockNetworkService: NetworkService {
     
     init(
         bundle: Bundle = .main,
-        logger: AppLogger? = nil
+        logger: CodeartisLogger? = nil
     ) {
         self.mockDataLoader = MockDataLoader(bundle: bundle, logger: logger)
         self.logger = logger

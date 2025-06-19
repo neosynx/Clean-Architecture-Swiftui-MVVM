@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Weather Data Access Strategy Protocol
 
@@ -26,7 +27,7 @@ struct WeatherCacheFirstStrategy: WeatherDataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> ForecastModel
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == String, P.Key == String, R.Key == String,
@@ -51,7 +52,7 @@ struct WeatherPersistenceFirstStrategy: WeatherDataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> ForecastModel
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == String, P.Key == String, R.Key == String,
@@ -76,7 +77,7 @@ struct WeatherNetworkFirstStrategy: WeatherDataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> ForecastModel
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == String, P.Key == String, R.Key == String,

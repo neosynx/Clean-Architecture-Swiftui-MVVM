@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Protocol
 
@@ -36,7 +37,7 @@ final class WeatherRemoteServiceImpl: RemoteServiceImpl<String, ForecastApiDTO>,
     
     // MARK: - Initialization
     
-    init(networkService: NetworkService, configuration: AppConfiguration, logger: AppLogger) {
+    init(networkService: NetworkService, configuration: AppConfiguration, logger: CodeartisLogger) {
         self.apiKey = configuration.apiKey
         
         super.init(

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Generic Cache First Strategy
 
@@ -17,7 +18,7 @@ struct CacheFirstStrategy<Key: Hashable, Model>: DataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> Model
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == Key, P.Key == Key, R.Key == Key,
@@ -63,7 +64,7 @@ struct PersistenceFirstStrategy<Key: Hashable, Model>: DataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> Model
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == Key, P.Key == Key, R.Key == Key,
@@ -109,7 +110,7 @@ struct NetworkFirstStrategy<Key: Hashable, Model>: DataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> Model
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == Key, P.Key == Key, R.Key == Key,

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Generic Remote Service
 
@@ -19,7 +20,7 @@ class RemoteServiceImpl<Key: Hashable, Value: Codable>: RemoteDataService {
      let networkService: NetworkService
      let baseURL: String
      let headers: [String: String]
-     let logger: AppLogger
+     let logger: CodeartisLogger
     
     // MARK: - Initialization
     
@@ -27,7 +28,7 @@ class RemoteServiceImpl<Key: Hashable, Value: Codable>: RemoteDataService {
         networkService: NetworkService,
         baseURL: String,
         headers: [String: String] = [:],
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.networkService = networkService
         self.baseURL = baseURL

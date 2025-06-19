@@ -7,6 +7,7 @@
 
 import Foundation
 import Network
+import codeartis_logging
 
 // MARK: - Network Service Implementation
 
@@ -18,7 +19,7 @@ final class NetworkServiceImpl: NetworkService {
     
     private let configuration: AppConfiguration
     private let networkConfig: NetworkConfiguration
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
@@ -42,13 +43,13 @@ final class NetworkServiceImpl: NetworkService {
     
     init(
         configuration: AppConfiguration,
-        loggerFactory: LoggerFactoryImpl,
+        loggerFactory: LoggerFactory,
         networkConfig: NetworkConfiguration = .default,
         sessionConfiguration: URLSessionConfiguration? = nil
     ) {
         self.configuration = configuration
         self.networkConfig = networkConfig
-        self.logger = loggerFactory.createNetworkLogger()
+        self.logger = loggerFactory.createLogger(category: "network")
         
         // Configure URLSession
         let config = sessionConfiguration ?? {

@@ -6,15 +6,17 @@
 //
 
 import SwiftUI
+import codeartis_logging
+import FactoryKit
 
 @Observable
 class SceneDelegate: NSObject, UIWindowSceneDelegate {
     var window: UIWindow?
     var scenePhase: ScenePhase = .active
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     override init() {
-        self.logger = LoggerFactoryImpl.shared.createAppLogger()
+        self.logger = Container.shared.appLogger()
         super.init()
     }
     

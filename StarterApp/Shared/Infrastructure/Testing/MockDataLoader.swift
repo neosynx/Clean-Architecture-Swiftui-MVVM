@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 /// Service for loading mock data from JSON files for testing and development
 /// This replaces network calls during testing and provides consistent test scenarios
@@ -52,14 +53,14 @@ final class MockDataLoader {
     // MARK: - Properties
     
     private let bundle: Bundle
-    private let logger: AppLogger?
+    private let logger: CodeartisLogger?
     private let decoder: JSONDecoder
     
     // MARK: - Initialization
     
     init(
         bundle: Bundle = .main,
-        logger: AppLogger? = nil
+        logger: CodeartisLogger? = nil
     ) {
         self.bundle = bundle
         self.logger = logger

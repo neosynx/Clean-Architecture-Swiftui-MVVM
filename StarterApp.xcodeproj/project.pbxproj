@@ -40,17 +40,12 @@
 		E26EB44A2E01A99A00518C00 /* FileDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4492E01A99A00518C00 /* FileDataService.swift */; };
 		E26EB44C2E01A9A200518C00 /* ProtocolMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB44B2E01A9A200518C00 /* ProtocolMapper.swift */; };
 		E26EB44E2E01A9AB00518C00 /* RemoteDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB44D2E01A9AB00518C00 /* RemoteDataService.swift */; };
-		E26EB4522E01BE9100518C00 /* AppLoggerImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB44F2E01BE9100518C00 /* AppLoggerImpl.swift */; };
-		E26EB4532E01BE9100518C00 /* LoggerFactoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4502E01BE9100518C00 /* LoggerFactoryImpl.swift */; };
-		E26EB4542E01BE9100518C00 /* LoggingConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4512E01BE9100518C00 /* LoggingConfiguration.swift */; };
-		E26EB4562E01BEA600518C00 /* Extension+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4552E01BEA600518C00 /* Extension+Logger.swift */; };
 		E26EB4682E01FA5900518C00 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4672E01FA5900518C00 /* NetworkService.swift */; };
 		E26EB4692E01FA5900518C00 /* NetworkServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4662E01FA5900518C00 /* NetworkServiceImpl.swift */; };
 		E26EB46C2E01FA6500518C00 /* AnalyticsServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB46A2E01FA6500518C00 /* AnalyticsServiceImpl.swift */; };
 		E26EB46E2E01FB2600518C00 /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB46D2E01FB2600518C00 /* HTTPMethod.swift */; };
 		E26EB4722E02026D00518C00 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4712E02026D00518C00 /* AnalyticsService.swift */; };
-		E26EB4742E0202C600518C00 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4732E0202C600518C00 /* AppLogger.swift */; };
-		E26EB4762E02030D00518C00 /* LoggerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E26EB4752E02030D00518C00 /* LoggerFactory.swift */; };
+		E27522AE2E0404FC008B8CC6 /* codeartis.logging in Frameworks */ = {isa = PBXBuildFile; productRef = E27522AD2E0404FC008B8CC6 /* codeartis.logging */; };
 		E27558FD2E03EC8B006A4E5D /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = E27558FC2E03EC8B006A4E5D /* FactoryKit */; };
 		E27559012E03EE43006A4E5D /* Container+Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27558FE2E03EE43006A4E5D /* Container+Core.swift */; };
 		E27559022E03EE43006A4E5D /* Container+Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27558FF2E03EE43006A4E5D /* Container+Weather.swift */; };
@@ -146,23 +141,18 @@
 		E26EB4492E01A99A00518C00 /* FileDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDataService.swift; sourceTree = "<group>"; };
 		E26EB44B2E01A9A200518C00 /* ProtocolMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtocolMapper.swift; sourceTree = "<group>"; };
 		E26EB44D2E01A9AB00518C00 /* RemoteDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataService.swift; sourceTree = "<group>"; };
-		E26EB44F2E01BE9100518C00 /* AppLoggerImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoggerImpl.swift; sourceTree = "<group>"; };
-		E26EB4502E01BE9100518C00 /* LoggerFactoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerFactoryImpl.swift; sourceTree = "<group>"; };
-		E26EB4512E01BE9100518C00 /* LoggingConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingConfiguration.swift; sourceTree = "<group>"; };
-		E26EB4552E01BEA600518C00 /* Extension+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension+Logger.swift"; sourceTree = "<group>"; };
 		E26EB4662E01FA5900518C00 /* NetworkServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceImpl.swift; sourceTree = "<group>"; };
 		E26EB4672E01FA5900518C00 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		E26EB46A2E01FA6500518C00 /* AnalyticsServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsServiceImpl.swift; sourceTree = "<group>"; };
 		E26EB46D2E01FB2600518C00 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		E26EB4712E02026D00518C00 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-		E26EB4732E0202C600518C00 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
-		E26EB4752E02030D00518C00 /* LoggerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerFactory.swift; sourceTree = "<group>"; };
 		E27558FE2E03EE43006A4E5D /* Container+Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Container+Core.swift"; sourceTree = "<group>"; };
 		E27558FF2E03EE43006A4E5D /* Container+Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Container+Weather.swift"; sourceTree = "<group>"; };
 		E27559032E03EEF0006A4E5D /* Container+Testing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Container+Testing.swift"; sourceTree = "<group>"; };
 		E27559052E03EF55006A4E5D /* FactoryWeatherStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactoryWeatherStoreTests.swift; sourceTree = "<group>"; };
 		E27559092E03F5C9006A4E5D /* SecureStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorageService.swift; sourceTree = "<group>"; };
 		E275590B2E03F69D006A4E5D /* SwiftDataContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataContainer.swift; sourceTree = "<group>"; };
+		E275590D2E040420006A4E5D /* codeartis-swift-logging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "codeartis-swift-logging"; path = "../codeartis-swift-logging"; sourceTree = SOURCE_ROOT; };
 		E29A84882E02B84B0082F24B /* WeatherEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherEntity.swift; sourceTree = "<group>"; };
 		E29A848A2E02B8600082F24B /* WeatherRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRepositoryImpl.swift; sourceTree = "<group>"; };
 		E29A848C2E02B87B0082F24B /* weather_empty.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = weather_empty.json; sourceTree = "<group>"; };
@@ -202,6 +192,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E27522AE2E0404FC008B8CC6 /* codeartis.logging in Frameworks */,
 				E27558FD2E03EC8B006A4E5D /* FactoryKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,6 +229,7 @@
 				6D139EC02C23342C004DF286 /* StarterAppTests */,
 				6D139ECA2C23342D004DF286 /* StarterAppUITests */,
 				6D139EAE2C23342A004DF286 /* Products */,
+				E208C9002E0404A20055E952 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -305,7 +297,6 @@
 		6D139EFA2C2338F0004DF286 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				E26EB4552E01BEA600518C00 /* Extension+Logger.swift */,
 				6D139F032C23B8A6004DF286 /* Extension+Date.swift */,
 			);
 			path = Extensions;
@@ -359,6 +350,14 @@
 				C593E1CDF677418AA6C913C5 /* WeatherStore.swift */,
 			);
 			path = Stores;
+			sourceTree = "<group>";
+		};
+		E208C9002E0404A20055E952 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E275590D2E040420006A4E5D /* codeartis-swift-logging */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E26EB3E82E0182C600518C00 /* Settings */ = {
@@ -469,18 +468,6 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
-		E26EB4572E01F84A00518C00 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				E26EB44F2E01BE9100518C00 /* AppLoggerImpl.swift */,
-				E26EB4732E0202C600518C00 /* AppLogger.swift */,
-				E26EB4502E01BE9100518C00 /* LoggerFactoryImpl.swift */,
-				E26EB4752E02030D00518C00 /* LoggerFactory.swift */,
-				E26EB4512E01BE9100518C00 /* LoggingConfiguration.swift */,
-			);
-			path = Logging;
-			sourceTree = "<group>";
-		};
 		E26EB46B2E01FA6500518C00 /* Analytics */ = {
 			isa = PBXGroup;
 			children = (
@@ -583,7 +570,6 @@
 		E2B37B352E01658300E46409 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				E26EB4572E01F84A00518C00 /* Logging */,
 				E26EB4422E01A64700518C00 /* Services */,
 				E26EB4332E01A62D00518C00 /* Mappers */,
 				E2B37B382E01659800E46409 /* Infrastructure */,
@@ -805,11 +791,9 @@
 				6D139EE52C2335C0004DF286 /* CityModel.swift in Sources */,
 				E29A84EB2E03072B0082F24B /* WeatherRemoteDataSource.swift in Sources */,
 				E26EB4682E01FA5900518C00 /* NetworkService.swift in Sources */,
-				E26EB4742E0202C600518C00 /* AppLogger.swift in Sources */,
 				E26EB4692E01FA5900518C00 /* NetworkServiceImpl.swift in Sources */,
 				6D139F072C23BB0F004DF286 /* AppConfiguration.swift in Sources */,
 				6D139EF82C23381D004DF286 /* WeatherRowView.swift in Sources */,
-				E26EB4562E01BEA600518C00 /* Extension+Logger.swift in Sources */,
 				E26EB44A2E01A99A00518C00 /* FileDataService.swift in Sources */,
 				E26EB4302E01A5F900518C00 /* WeatherRemoteService.swift in Sources */,
 				E27559042E03EEF0006A4E5D /* Container+Testing.swift in Sources */,
@@ -826,7 +810,6 @@
 				E26EB4022E01888B00518C00 /* WeatherRepository.swift in Sources */,
 				E26EB46C2E01FA6500518C00 /* AnalyticsServiceImpl.swift in Sources */,
 				6D139EE72C2335E4004DF286 /* TemperatureModel.swift in Sources */,
-				E26EB4762E02030D00518C00 /* LoggerFactory.swift in Sources */,
 				E26EB44E2E01A9AB00518C00 /* RemoteDataService.swift in Sources */,
 				6D139F022C233D4E004DF286 /* WeatherAPIConfiguration.swift in Sources */,
 				E29A84ED2E0307490082F24B /* WeatherCacheDataSource.swift in Sources */,
@@ -846,10 +829,7 @@
 				E29A84E12E02F0B30082F24B /* WeatherRepositoryHealthService.swift in Sources */,
 				E29A84E22E02F0B30082F24B /* WeatherRepositoryConfiguration.swift in Sources */,
 				E26EB4432E01A64700518C00 /* DataService.swift in Sources */,
-				E26EB4522E01BE9100518C00 /* AppLoggerImpl.swift in Sources */,
 				E29A84A12E02B8A50082F24B /* SecureStorageServiceImpl.swift in Sources */,
-				E26EB4532E01BE9100518C00 /* LoggerFactoryImpl.swift in Sources */,
-				E26EB4542E01BE9100518C00 /* LoggingConfiguration.swift in Sources */,
 				E29A84A52E02B8AB0082F24B /* MockDataLoader.swift in Sources */,
 				E29A84A62E02B8AB0082F24B /* MockNetworkService.swift in Sources */,
 				E26EB4452E01A64700518C00 /* FileServiceImpl.swift in Sources */,
@@ -1210,6 +1190,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E27522AD2E0404FC008B8CC6 /* codeartis.logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = codeartis.logging;
+		};
 		E27558FC2E03EC8B006A4E5D /* FactoryKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E27558FB2E03EC8B006A4E5D /* XCRemoteSwiftPackageReference "Factory" */;

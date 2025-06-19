@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 /// Weather remote data source implementation using WeatherRemoteService
 final class WeatherRemoteDataSourceImpl: WeatherRemoteDataSource {
@@ -14,14 +15,14 @@ final class WeatherRemoteDataSourceImpl: WeatherRemoteDataSource {
     
     private let remoteService: WeatherRemoteService
     private let mapper: WeatherProtocolMapper
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Initialization
     
     init(
         remoteService: WeatherRemoteService,
         mapper: WeatherProtocolMapper,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.remoteService = remoteService
         self.mapper = mapper

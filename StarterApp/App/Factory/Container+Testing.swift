@@ -7,6 +7,7 @@
 
 import Foundation
 import FactoryKit
+import codeartis_logging
 
 // MARK: - Testing Configuration
 
@@ -31,7 +32,7 @@ extension Container {
     static func configureWithMocks(
         networkService: NetworkService? = nil,
         weatherRepository: (any WeatherRepository)? = nil,
-        loggerFactory: LoggerFactoryImpl? = nil
+        loggerFactory: LoggerFactory? = nil
     ) {
         if let networkService = networkService {
             Container.shared.networkService.register { networkService }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Weather Repository Health Service
 
@@ -186,7 +187,7 @@ final class WeatherRepositoryHealthServiceImpl: WeatherRepositoryHealthService {
     private let cacheDataSource: WeatherCacheDataSource
     private let persistenceDataSource: WeatherPersistenceDataSource
     private let remoteDataSource: WeatherRemoteDataSource?
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     private let configuration: WeatherRepositoryConfiguration
     
     // Health tracking
@@ -201,7 +202,7 @@ final class WeatherRepositoryHealthServiceImpl: WeatherRepositoryHealthService {
         persistenceDataSource: WeatherPersistenceDataSource,
         remoteDataSource: WeatherRemoteDataSource?,
         configuration: WeatherRepositoryConfiguration,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.cacheDataSource = cacheDataSource
         self.persistenceDataSource = persistenceDataSource

@@ -7,6 +7,7 @@
 
 import Foundation
 import FactoryKit
+import codeartis_logging
 
 // MARK: - Protocol
 
@@ -24,7 +25,7 @@ protocol AppContainer {
     
     var networkService: NetworkService { get }
     var analyticsService: AnalyticsService { get }
-    var loggerFactory: LoggerFactoryImpl { get }
+    var loggerFactory: LoggerFactory { get }
     var swiftDataContainer: SwiftDataContainer { get }
     var secureStorageService: SecureStorageService { get }
     
@@ -58,7 +59,7 @@ class AppContainerImpl: AppContainer {
         Container.shared.analyticsService()
     }
     
-    var loggerFactory: LoggerFactoryImpl {
+    var loggerFactory: LoggerFactory {
         Container.shared.loggerFactory()
     }
     
@@ -92,10 +93,10 @@ class AppContainerImpl: AppContainer {
     func configureAPIKey(_ apiKey: String, for service: String) async {
         do {
             try await secureStorageService.storeAPIKey(apiKey, for: service)
-            let logger = loggerFactory.createAppLogger()
+            let logger = loggerFactory.createLogger(category: "app")
             logger.info("API key configured for service: \(service)")
         } catch {
-            let logger = loggerFactory.createAppLogger()
+            let logger = loggerFactory.createLogger(category: "app")
             logger.error("Failed to store API key: \(error)")
         }
     }
@@ -105,7 +106,7 @@ class AppContainerImpl: AppContainer {
         do {
             return try await secureStorageService.retrieveAPIKey(for: service)
         } catch {
-            let logger = loggerFactory.createAppLogger()
+            let logger = loggerFactory.createLogger(category: "app")
             logger.error("Failed to retrieve API key: \(error)")
             return nil
         }
@@ -119,7 +120,7 @@ class AppContainerImpl: AppContainer {
     // MARK: - Configuration
     func switchDataSource() {
         useLocalData.toggle()
-        let logger = loggerFactory.createAppLogger()
+        let logger = loggerFactory.createLogger(category: "app")
         logger.info("Switched to \(useLocalData ? "local" : "remote") data source")
     }
     

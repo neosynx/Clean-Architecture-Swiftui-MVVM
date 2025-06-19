@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 
 
@@ -16,11 +17,11 @@ final class AnalyticsServiceImpl: AnalyticsService {
     // MARK: - Properties
     
     private let environment: AppEnvironment
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Initialization
     
-    init(environment: AppEnvironment, loggerFactory: LoggerFactoryImpl) {
+    init(environment: AppEnvironment, loggerFactory: LoggerFactory) {
         self.environment = environment
         self.logger = loggerFactory.createLogger(category: LogCategory.analytics)
         

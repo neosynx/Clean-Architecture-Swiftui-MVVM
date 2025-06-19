@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - JSON Loader Protocol
 
@@ -17,7 +18,7 @@ protocol JSONLoaderProtocol {
     ///   - filename: The name of the JSON file (without extension)
     ///   - logger: Optional logger for error reporting
     /// - Returns: The JSON data if successful, nil otherwise
-    func loadJSON(filename: String, logger: AppLogger?) -> Data?
+    func loadJSON(filename: String, logger: CodeartisLogger?) -> Data?
 }
 
 // MARK: - Default Implementation
@@ -34,7 +35,7 @@ extension JSONLoaderProtocol {
 /// Implementation that loads JSON files from the app bundle
 final class JSONLoader: JSONLoaderProtocol {
     
-    func loadJSON(filename: String, logger: AppLogger? = nil) -> Data? {
+    func loadJSON(filename: String, logger: CodeartisLogger? = nil) -> Data? {
         guard let url = Bundle.main.url(forResource: filename, withExtension: "json") else {
             let message = "JSON file '\(filename).json' not found in bundle"
             if let logger = logger {
@@ -99,7 +100,7 @@ final class MockJSONLoader: JSONLoaderProtocol {
         loadedFiles.removeAll()
     }
     
-    func loadJSON(filename: String, logger: AppLogger?) -> Data? {
+    func loadJSON(filename: String, logger: CodeartisLogger?) -> Data? {
         loadedFiles.append(filename)
         
         if shouldFailLoading {

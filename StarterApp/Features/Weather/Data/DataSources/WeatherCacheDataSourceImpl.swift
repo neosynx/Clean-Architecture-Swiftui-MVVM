@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 /// Weather cache data source implementation using DomainModelCache
 final class WeatherCacheDataSourceImpl: WeatherCacheDataSource {
@@ -20,7 +21,7 @@ final class WeatherCacheDataSourceImpl: WeatherCacheDataSource {
         countLimit: Int = 50,
         totalCostLimit: Int = 20 * 1024 * 1024, // 20MB
         expirationInterval: TimeInterval = 3600, // 1 hour
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.cache = DomainModelCache<String, ForecastModel>(
             countLimit: countLimit,

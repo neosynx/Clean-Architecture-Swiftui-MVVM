@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Generic Data Access Strategy Protocol
 
@@ -29,7 +30,7 @@ protocol DataAccessStrategy {
         cache: C,
         persistence: P,
         remote: R?,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) async throws -> Model
     where C: CacheDataSource, P: PersistenceDataSource, R: RemoteDataSource,
           C.Key == Key, P.Key == Key, R.Key == Key,

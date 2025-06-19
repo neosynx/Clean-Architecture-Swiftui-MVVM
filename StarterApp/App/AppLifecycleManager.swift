@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Combine
+import codeartis_logging
 
 // MARK: - App Lifecycle Manager Protocol
 
@@ -48,9 +49,9 @@ class AppLifecycleManager: AppLifecycleManagerProtocol {
     var backgroundTasksActive = false
     
     private var cancellables = Set<AnyCancellable>()
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
-    init(logger: AppLogger) {
+    init(logger: CodeartisLogger) {
         self.logger = logger
         logger.info("AppLifecycleManager initialized")
         setupLifecycleObservers()

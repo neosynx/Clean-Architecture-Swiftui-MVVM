@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 // MARK: - Protocol
 
@@ -53,7 +54,7 @@ final class WeatherFileServiceImpl: FileServiceImpl<String, WeatherApiDTO>, Weat
     
     // MARK: - Initialization
     
-    init(logger: AppLogger) {
+    init(logger: CodeartisLogger) {
         super.init(
             directoryName: "Weather",
             fileExtension: "json",

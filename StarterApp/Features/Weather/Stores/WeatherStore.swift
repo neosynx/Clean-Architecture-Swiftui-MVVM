@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import codeartis_logging
 
 @Observable
 class WeatherStore {
@@ -18,10 +19,10 @@ class WeatherStore {
     
     // MARK: - Dependencies
     private let weatherRepository: WeatherRepository
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Initialization
-    init(weatherRepository: WeatherRepository, logger: AppLogger) {
+    init(weatherRepository: WeatherRepository, logger: CodeartisLogger) {
         self.weatherRepository = weatherRepository
         self.logger = logger
         logger.info("WeatherStore initialized")

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import codeartis_logging
 
 // MARK: - Implementation
 
@@ -23,7 +24,7 @@ final class SwiftDataContainerImpl: SwiftDataContainer {
     
     private let modelContainer: ModelContainer
     private let modelContext: ModelContext
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Configuration
     
@@ -49,7 +50,7 @@ final class SwiftDataContainerImpl: SwiftDataContainer {
     
     init(
         configuration: Configuration = .default,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) throws {
         self.logger = logger
         
@@ -316,7 +317,7 @@ struct StorageStatistics {
 #if DEBUG
 extension SwiftDataContainerImpl {
     /// Create an in-memory container for testing
-    static func inMemory(logger: AppLogger) throws -> SwiftDataContainerImpl {
+    static func inMemory(logger: CodeartisLogger) throws -> SwiftDataContainerImpl {
         try SwiftDataContainerImpl(
             configuration: .inMemory,
             logger: logger

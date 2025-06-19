@@ -7,15 +7,17 @@
 
 import UIKit
 import UserNotifications
+import codeartis_logging
+import FactoryKit
 
 @Observable
 class AppDelegate: NSObject, UIApplicationDelegate {
     var isNetworkAvailable = true
     var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     override init() {
-        self.logger = LoggerFactoryImpl.shared.createAppLogger()
+        self.logger = Container.shared.appLogger()
         super.init()
     }
     

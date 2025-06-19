@@ -7,6 +7,8 @@
 
 import Foundation
 import Security
+import codeartis_logging
+import FactoryKit
 
 
 
@@ -33,7 +35,7 @@ final class SecureStorageServiceImpl: SecureStorageService {
     
     private let keychainService: KeychainService
     private let userDefaultsService: UserDefaultsService
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Protocol Conformance
     
@@ -41,7 +43,7 @@ final class SecureStorageServiceImpl: SecureStorageService {
     
     // MARK: - Initialization
     
-    init(logger: AppLogger) {
+    init(logger: CodeartisLogger) {
         self.keychainService = KeychainService(logger: logger)
         self.userDefaultsService = UserDefaultsService(logger: logger)
         self.logger = logger
@@ -142,7 +144,7 @@ final class KeychainService {
     
     private let service: String
     private let accessGroup: String?
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Errors
     
@@ -180,7 +182,7 @@ final class KeychainService {
     init(
         service: String = Bundle.main.bundleIdentifier ?? "com.app.starterapp",
         accessGroup: String? = nil,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.service = service
         self.accessGroup = accessGroup
@@ -331,13 +333,13 @@ final class UserDefaultsService {
     
     private let userDefaults: UserDefaults
     private let suiteName: String?
-    private let logger: AppLogger
+    private let logger: CodeartisLogger
     
     // MARK: - Initialization
     
     init(
         suiteName: String? = nil,
-        logger: AppLogger
+        logger: CodeartisLogger
     ) {
         self.suiteName = suiteName
         self.userDefaults = UserDefaults(suiteName: suiteName) ?? .standard
@@ -443,7 +445,7 @@ struct KeychainStored<T: Codable> {
         // Note: This is a simplified implementation for the property wrapper
         // In production, you'd inject the logger properly
         // For now, we provide a logger using the shared factory since property wrappers must be synchronous
-        let logger = LoggerFactoryImpl.shared.createLogger(category: "keychain")
+        let logger = Container.shared.loggerFactory().createLogger(category: "keychain")
         self.keychainService = KeychainService(logger: logger)
     }
     

@@ -7,6 +7,7 @@
 
 import Foundation
 import FactoryKit
+import codeartis_logging
 
 // MARK: - Core Infrastructure Services
 
@@ -26,7 +27,7 @@ extension Container {
     
     // MARK: - Logging
     
-    var loggerFactory: Factory<LoggerFactoryImpl> {
+    var loggerFactory: Factory<LoggerFactory> {
         self {
             let environment = self.appEnvironment()
             let loggingEnvironment: LoggingEnvironment = {
@@ -46,13 +47,13 @@ extension Container {
         .singleton
     }
     
-    var appLogger: Factory<AppLogger> {
-        self { self.loggerFactory().createAppLogger() }
+    var appLogger: Factory<CodeartisLogger> {
+        self { self.loggerFactory().createLogger(category: "app") }
             .cached
     }
     
-    var weatherLogger: Factory<AppLogger> {
-        self { self.loggerFactory().createWeatherLogger() }
+    var weatherLogger: Factory<CodeartisLogger> {
+        self { self.loggerFactory().createLogger(category: "weather") }
             .cached
     }
     
