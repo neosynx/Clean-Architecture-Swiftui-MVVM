@@ -21,7 +21,7 @@ final class WeatherPersistenceDataSourceImpl: WeatherPersistenceDataSource {
     
     init(
         persistenceService: SwiftDataContainer,
-        mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
+        mapper: WeatherProtocolMapper,
         logger: AppLogger
     ) {
         self.persistenceService = persistenceService

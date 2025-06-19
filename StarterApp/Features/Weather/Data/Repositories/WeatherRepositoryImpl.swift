@@ -25,7 +25,7 @@ final class WeatherRepositoryImpl: WeatherRepository {
     init(
         swiftDataContainer: SwiftDataContainer,
         remoteService: WeatherRemoteService,
-        mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
+        mapper: WeatherProtocolMapper,
         strategyType: WeatherDataAccessStrategyType = .cacheFirst,
         logger: AppLogger,
         secureStorage: SecureStorageService

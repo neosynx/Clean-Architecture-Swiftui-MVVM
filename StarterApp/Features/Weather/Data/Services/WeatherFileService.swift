@@ -7,10 +7,49 @@
 
 import Foundation
 
-// MARK: - Weather File Service
+// MARK: - Protocol
+
+/// Protocol for weather file service operations
+/// Provides a unified interface for file-based weather data storage
+protocol WeatherFileService {
+    
+    /// Fetch weather data from file storage
+    /// - Parameter city: The city name to fetch weather for
+    /// - Returns: Weather data from file storage
+    /// - Throws: ServiceError for various failure scenarios
+    func fetch(for city: String) async throws -> WeatherApiDTO
+    
+    /// Save weather forecast to file
+    /// - Parameters:
+    ///   - forecast: The weather forecast to save
+    ///   - city: The city name to save forecast for
+    /// - Throws: ServiceError if save operation fails
+    func saveForecast(_ forecast: WeatherApiDTO, for city: String) async throws
+    
+    /// Delete weather forecast file
+    /// - Parameter city: The city name to delete forecast for
+    /// - Throws: ServiceError if delete operation fails
+    func deleteForecast(for city: String) async throws
+    
+    /// Clear all weather files
+    /// - Throws: ServiceError if clear operation fails
+    func clearAllForecasts() async throws
+    
+    /// Get all available city keys
+    /// - Returns: Array of city names that have stored weather data
+    /// - Throws: ServiceError if operation fails
+    func getAllKeys() async throws -> [String]
+    
+    /// Check if weather data exists for a city
+    /// - Parameter city: The city name to check
+    /// - Returns: True if data exists, false otherwise
+    func exists(for city: String) async throws -> Bool
+}
+
+// MARK: - Implementation
 
 /// Weather-specific file service implementation
-final class WeatherFileService: FileServiceImpl<String, WeatherApiDTO> {
+final class WeatherFileServiceImpl: FileServiceImpl<String, WeatherApiDTO>, WeatherFileService {
     
     // MARK: - Initialization
     

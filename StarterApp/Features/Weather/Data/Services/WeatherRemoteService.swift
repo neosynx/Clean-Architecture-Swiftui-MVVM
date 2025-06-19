@@ -7,10 +7,28 @@
 
 import Foundation
 
-// MARK: - Weather Remote Service
+// MARK: - Protocol
+
+/// Protocol for weather remote service operations
+/// Provides a unified interface for fetching weather data from remote sources
+protocol WeatherRemoteService {
+    
+    /// Fetch weather forecast data for a given city
+    /// - Parameter city: The city name to fetch weather for
+    /// - Returns: Weather forecast data from the API
+    /// - Throws: ServiceError for various failure scenarios
+    func fetch(for city: String) async throws -> ForecastApiDTO
+    
+    /// Build URL for weather API request
+    /// - Parameter city: The city name to build URL for
+    /// - Returns: Complete URL string for the API request
+    func buildURL(for city: String) -> String
+}
+
+// MARK: - Implementation
 
 /// Weather-specific remote service implementation
-final class WeatherRemoteService: RemoteServiceImpl<String, ForecastApiDTO> {
+final class WeatherRemoteServiceImpl: RemoteServiceImpl<String, ForecastApiDTO>, WeatherRemoteService {
     
     // MARK: - Properties
     

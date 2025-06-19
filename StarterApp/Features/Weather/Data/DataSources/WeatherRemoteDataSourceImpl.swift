@@ -20,7 +20,7 @@ final class WeatherRemoteDataSourceImpl: WeatherRemoteDataSource {
     
     init(
         remoteService: WeatherRemoteService,
-        mapper: WeatherProtocolMapper = WeatherProtocolMapper(),
+        mapper: WeatherProtocolMapper,
         logger: AppLogger
     ) {
         self.remoteService = remoteService

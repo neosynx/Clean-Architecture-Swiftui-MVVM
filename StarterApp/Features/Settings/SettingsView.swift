@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(AppContainer.self) private var container
+    @Environment(AppContainerImpl.self) private var container
     
     var body: some View {
         NavigationView {

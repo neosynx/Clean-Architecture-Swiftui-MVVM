@@ -193,3 +193,183 @@ class FileServiceImpl<Key: Hashable, Value: Codable>: FileDataService {
         }
     }
 }
+
+// MARK: - Mock File Service Implementation for Testing
+
+#if DEBUG
+/// Mock implementation of FileDataService for testing purposes
+final class MockFileService<Key: Hashable, Value: Codable>: FileDataService {
+    typealias Key = Key
+    typealias Value = Value
+    
+    // MARK: - Mock Storage
+    
+    private var storage: [Key: Value] = [:]
+    private var shouldFailOperations = false
+    private let logger: AppLogger?
+    
+    // MARK: - Call Tracking
+    
+    private(set) var fetchCallCount = 0
+    private(set) var saveCallCount = 0
+    private(set) var deleteCallCount = 0
+    private(set) var existsCallCount = 0
+    private(set) var getAllKeysCallCount = 0
+    
+    private(set) var lastFetchedKey: Key?
+    private(set) var lastSavedKey: Key?
+    private(set) var lastSavedValue: Value?
+    private(set) var lastDeletedKey: Key?
+    
+    // MARK: - Initialization
+    
+    init(logger: AppLogger? = nil) {
+        self.logger = logger
+    }
+    
+    // MARK: - FileDataService Protocol Implementation
+    
+    func fetch(for key: Key) async throws -> Value {
+        fetchCallCount += 1
+        lastFetchedKey = key
+        
+        logger?.debug("📁 MockFileService.fetch called for key: \(key)")
+        
+        if shouldFailOperations {
+            throw ServiceError.serviceUnavailable
+        }
+        
+        guard let value = storage[key] else {
+            logger?.debug("📁 MockFileService.fetch: Key not found: \(key)")
+            throw ServiceError.notFound
+        }
+        
+        logger?.debug("📁 MockFileService.fetch: Returning value for key: \(key)")
+        return value
+    }
+    
+    func exists(for key: Key) async -> Bool {
+        existsCallCount += 1
+        
+        logger?.debug("📁 MockFileService.exists called for key: \(key)")
+        
+        let exists = storage[key] != nil
+        logger?.debug("📁 MockFileService.exists: Key \(key) exists: \(exists)")
+        return exists
+    }
+    
+    func getAllKeys() async throws -> [Key] {
+        getAllKeysCallCount += 1
+        
+        logger?.debug("📁 MockFileService.getAllKeys called")
+        
+        if shouldFailOperations {
+            throw ServiceError.serviceUnavailable
+        }
+        
+        let keys = Array(storage.keys)
+        logger?.debug("📁 MockFileService.getAllKeys: Returning \(keys.count) keys")
+        return keys
+    }
+    
+    // MARK: - Additional Mock Methods (Public for Testing)
+    
+    /// Save a value for a key (public for mock control)
+    func save(_ value: Value, for key: Key) async throws {
+        saveCallCount += 1
+        lastSavedKey = key
+        lastSavedValue = value
+        
+        logger?.debug("📁 MockFileService.save called for key: \(key)")
+        
+        if shouldFailOperations {
+            throw ServiceError.serviceUnavailable
+        }
+        
+        storage[key] = value
+        logger?.debug("📁 MockFileService.save: Saved value for key: \(key)")
+    }
+    
+    /// Delete a value for a key (public for mock control)
+    func delete(for key: Key) async throws {
+        deleteCallCount += 1
+        lastDeletedKey = key
+        
+        logger?.debug("📁 MockFileService.delete called for key: \(key)")
+        
+        if shouldFailOperations {
+            throw ServiceError.serviceUnavailable
+        }
+        
+        storage.removeValue(forKey: key)
+        logger?.debug("📁 MockFileService.delete: Deleted value for key: \(key)")
+    }
+    
+    // MARK: - Mock Control Methods
+    
+    /// Configure the mock to fail operations
+    func setShouldFailOperations(_ shouldFail: Bool) {
+        shouldFailOperations = shouldFail
+        logger?.debug("📁 MockFileService: Set shouldFailOperations to \(shouldFail)")
+    }
+    
+    /// Set mock data for a specific key
+    func setMockData(_ value: Value, for key: Key) {
+        storage[key] = value
+        logger?.debug("📁 MockFileService: Set mock data for key: \(key)")
+    }
+    
+    /// Remove mock data for a specific key
+    func removeMockData(for key: Key) {
+        storage.removeValue(forKey: key)
+        logger?.debug("📁 MockFileService: Removed mock data for key: \(key)")
+    }
+    
+    /// Clear all mock data
+    func clearAllMockData() {
+        storage.removeAll()
+        logger?.debug("📁 MockFileService: Cleared all mock data")
+    }
+    
+    /// Reset all mock state including call counts
+    func reset() {
+        storage.removeAll()
+        shouldFailOperations = false
+        
+        fetchCallCount = 0
+        saveCallCount = 0
+        deleteCallCount = 0
+        existsCallCount = 0
+        getAllKeysCallCount = 0
+        
+        lastFetchedKey = nil
+        lastSavedKey = nil
+        lastSavedValue = nil
+        lastDeletedKey = nil
+        
+        logger?.debug("📁 MockFileService: Reset all state")
+    }
+    
+    // MARK: - Test Helpers
+    
+    /// Get the current storage state (for testing)
+    var currentStorage: [Key: Value] {
+        return storage
+    }
+    
+    /// Get total call count across all operations
+    var totalCallCount: Int {
+        return fetchCallCount + saveCallCount + deleteCallCount + existsCallCount + getAllKeysCallCount
+    }
+    
+    /// Check if a specific key was accessed
+    func wasKeyAccessed(_ key: Key) -> Bool {
+        return lastFetchedKey == key || lastSavedKey == key || lastDeletedKey == key
+    }
+    
+    /// Get number of items in storage
+    var storageCount: Int {
+        return storage.count
+    }
+}
+#endif

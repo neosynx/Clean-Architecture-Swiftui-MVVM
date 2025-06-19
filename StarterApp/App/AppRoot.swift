@@ -6,17 +6,18 @@
 //
 
 import SwiftUI
+import FactoryKit
 
 @main
 struct AppRoot: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @State private var container = AppContainer()
+    @State private var container = AppContainerImpl()
     @State private var sceneDelegate = SceneDelegate()
     @State private var lifecycleManager: AppLifecycleManager
     @Environment(\.scenePhase) private var scenePhase
     
     init() {
-        let appContainer = AppContainer()
+        let appContainer = AppContainerImpl()
         let logger = appContainer.loggerFactory.createAppLogger()
         _container = State(initialValue: appContainer)
         _lifecycleManager = State(initialValue: AppLifecycleManager(logger: logger))
@@ -29,6 +30,8 @@ struct AppRoot: App {
                 .environment(appDelegate)
                 .environment(sceneDelegate)
                 .environment(lifecycleManager)
+                // Factory-created stores via environment (constructor-injected, shared)
+                .environment(Container.shared.weatherStore())
                 .onChange(of: scenePhase) { _, newPhase in
                     handleScenePhaseChange(newPhase)
                 }

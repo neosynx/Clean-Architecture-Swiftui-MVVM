@@ -1,6 +1,6 @@
 //
 //  AppLifecycleManager.swift
-//  ExampleMVVM
+//  StarterApp
 //
 //  Created by Claude on 17/6/25.
 //
@@ -8,8 +8,41 @@
 import SwiftUI
 import Combine
 
+// MARK: - App Lifecycle Manager Protocol
+
+/// Protocol for managing application lifecycle events and state
+/// This abstraction allows for easy testing and different implementations
+protocol AppLifecycleManagerProtocol: Observable {
+    /// Current app active state
+    var isAppActive: Bool { get }
+    
+    /// Current network availability state
+    var isNetworkAvailable: Bool { get }
+    
+    /// Background tasks active state
+    var backgroundTasksActive: Bool { get }
+    
+    /// Update network status
+    /// - Parameter isAvailable: Whether network is currently available
+    func updateNetworkStatus(_ isAvailable: Bool)
+    
+    /// Handle memory warning
+    func handleMemoryWarning()
+    
+    /// Check if background tasks can be performed
+    var canPerformBackgroundTasks: Bool { get }
+    
+    /// Check if data should be refreshed
+    var shouldRefreshData: Bool { get }
+    
+    /// Check if app is in optimal state
+    var isInOptimalState: Bool { get }
+}
+
+// MARK: - App Lifecycle Manager Implementation
+
 @Observable
-class AppLifecycleManager {
+class AppLifecycleManager: AppLifecycleManagerProtocol {
     var isAppActive = true
     var isNetworkAvailable = true
     var backgroundTasksActive = false
@@ -161,3 +194,86 @@ extension AppLifecycleManager {
         isAppActive && isNetworkAvailable && !backgroundTasksActive
     }
 }
+
+// MARK: - Mock Implementation for Testing
+
+#if DEBUG
+@Observable
+final class MockAppLifecycleManager: AppLifecycleManagerProtocol {
+    
+    var isAppActive = true
+    var isNetworkAvailable = true
+    var backgroundTasksActive = false
+    
+    private(set) var networkStatusUpdates: [Bool] = []
+    private(set) var memoryWarningCount = 0
+    
+    // MARK: - Mock Control Methods
+    
+    /// Simulate app becoming active
+    func simulateAppBecameActive() {
+        isAppActive = true
+    }
+    
+    /// Simulate app going inactive
+    func simulateAppWillResignActive() {
+        isAppActive = false
+    }
+    
+    /// Simulate app entering background
+    func simulateAppDidEnterBackground() {
+        isAppActive = false
+        backgroundTasksActive = true
+    }
+    
+    /// Simulate app entering foreground
+    func simulateAppWillEnterForeground() {
+        isAppActive = true
+        backgroundTasksActive = false
+    }
+    
+    /// Reset all mock state
+    func reset() {
+        isAppActive = true
+        isNetworkAvailable = true
+        backgroundTasksActive = false
+        networkStatusUpdates.removeAll()
+        memoryWarningCount = 0
+    }
+    
+    // MARK: - Protocol Implementation
+    
+    func updateNetworkStatus(_ isAvailable: Bool) {
+        isNetworkAvailable = isAvailable
+        networkStatusUpdates.append(isAvailable)
+    }
+    
+    func handleMemoryWarning() {
+        memoryWarningCount += 1
+    }
+    
+    var canPerformBackgroundTasks: Bool {
+        backgroundTasksActive && !isAppActive
+    }
+    
+    var shouldRefreshData: Bool {
+        isAppActive && isNetworkAvailable
+    }
+    
+    var isInOptimalState: Bool {
+        isAppActive && isNetworkAvailable && !backgroundTasksActive
+    }
+    
+    // MARK: - Test Helpers
+    
+    /// Check if network status was updated with specific value
+    func wasNetworkStatusUpdated(to status: Bool) -> Bool {
+        return networkStatusUpdates.contains(status)
+    }
+    
+    /// Get number of network status updates
+    var networkStatusUpdateCount: Int {
+        return networkStatusUpdates.count
+    }
+}
+#endif

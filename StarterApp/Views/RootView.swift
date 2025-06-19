@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RootView: View {
-    @Environment(AppContainer.self) private var container
+    @Environment(AppContainerImpl.self) private var container
     @State private var weatherStore: WeatherStore?
     
     var body: some View {

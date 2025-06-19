@@ -7,11 +7,55 @@
 
 import Foundation
 
-// MARK: - Weather Protocol Mapper
+// MARK: - Protocol
+
+/// Protocol for weather data mapping operations
+/// Provides a unified interface for converting between different data representations
+protocol WeatherProtocolMapper {
+    
+    // MARK: - Associated Types
+    
+    associatedtype DomainModel = ForecastModel
+    associatedtype RemoteDTO = ForecastApiDTO
+    associatedtype DataEntity = WeatherEntity
+    
+    // MARK: - Remote DTO Mapping
+    
+    /// Map API DTO to Domain Model
+    /// - Parameter dto: API forecast DTO
+    /// - Returns: Domain forecast model
+    func mapToDomain(_ dto: ForecastApiDTO) -> ForecastModel
+    
+    // MARK: - SwiftData Entity Mapping
+    
+    /// Map SwiftData entity to Domain Model
+    /// - Parameter dto: WeatherEntity from SwiftData
+    /// - Returns: Domain forecast model
+    func mapToDomain(_ dto: WeatherEntity) -> ForecastModel
+    
+    /// Map Domain Model to SwiftData entity
+    /// - Parameter model: Domain forecast model
+    /// - Returns: WeatherEntity for SwiftData persistence
+    func mapToSwiftDataEntity(_ model: ForecastModel) -> WeatherEntity
+    
+    /// Map API DTO directly to SwiftData entities
+    /// - Parameter apiDTO: API forecast DTO
+    /// - Returns: Array of WeatherEntity for persistence
+    func mapApiToSwiftDataDTO(_ apiDTO: ForecastApiDTO) -> [WeatherEntity]
+    
+    // MARK: - Batch Mapping
+    
+    /// Map multiple SwiftData entities to a single Domain Model
+    /// - Parameter dtos: Array of WeatherEntity
+    /// - Returns: Combined forecast model or nil if empty
+    func mapToDomain(_ dtos: [WeatherEntity]) -> ForecastModel?
+}
+
+// MARK: - Implementation
 
 /// Weather-specific protocol mapper implementation
 /// Extended to support SwiftData DTOs for modern iOS 17+ persistence
-final class WeatherProtocolMapper: ProtocolMapperImpl<ForecastModel, ForecastApiDTO>, ProtocolMapper {
+final class WeatherProtocolMapperImpl: ProtocolMapperImpl<ForecastModel, ForecastApiDTO>, ProtocolMapper, WeatherProtocolMapper {
     typealias DomainModel = ForecastModel
     typealias RemoteDTO = ForecastApiDTO
     typealias DataEntity = WeatherEntity

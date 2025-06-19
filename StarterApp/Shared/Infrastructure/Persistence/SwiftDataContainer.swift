@@ -1,320 +1,74 @@
 //
-//  SwiftDataContainer.swift
+//  SwiftDataContainer 2.swift
 //  StarterApp
 //
-//  Created by Claude on 18/6/25.
+//  Created by ryan arter on 2025/06/19.
 //
 
 import Foundation
 import SwiftData
 
-/// SwiftData container for managing persistent storage in iOS 17+
-/// This main actor ensures thread-safe access to the model container and context
+
+// MARK: - Protocol
+
+/// Protocol for SwiftData container operations
+/// Provides a unified interface for persistent storage management
 @MainActor
-final class SwiftDataContainer {
-    
-    // MARK: - Properties
-    
-    private let modelContainer: ModelContainer
-    private let modelContext: ModelContext
-    private let logger: AppLogger
+protocol SwiftDataContainer {
     
     // MARK: - Configuration
     
-    struct Configuration {
-        let isStoredInMemoryOnly: Bool
-        let allowsSave: Bool
-        let cloudKitContainerIdentifier: String?
-        
-        static let `default` = Configuration(
-            isStoredInMemoryOnly: false,
-            allowsSave: true,
-            cloudKitContainerIdentifier: nil
-        )
-        
-        static let inMemory = Configuration(
-            isStoredInMemoryOnly: true,
-            allowsSave: true,
-            cloudKitContainerIdentifier: nil
-        )
-    }
-    
-    // MARK: - Initialization
-    
-    init(
-        configuration: Configuration = .default,
-        logger: AppLogger
-    ) throws {
-        self.logger = logger
-        
-        // Define the schema
-        let schema = Schema([
-            WeatherEntity.self
-        ])
-        
-        // Create model configuration
-        let modelConfiguration = ModelConfiguration(
-            schema: schema,
-            isStoredInMemoryOnly: configuration.isStoredInMemoryOnly,
-            allowsSave: configuration.allowsSave
-        )
-        
-        // Initialize container
-        self.modelContainer = try ModelContainer(
-            for: schema,
-            configurations: [modelConfiguration]
-        )
-        
-        // Create context
-        self.modelContext = ModelContext(modelContainer)
-        self.modelContext.autosaveEnabled = true
-        
-        logger.info("SwiftDataContainer initialized with configuration: \(configuration)")
-    }
+    /// Configuration type for the container
+    associatedtype ContainerConfiguration
     
     // MARK: - CRUD Operations
     
     /// Fetch models matching the given descriptor
-    func fetch<T: PersistentModel>(_ descriptor: FetchDescriptor<T>) throws -> [T] {
-        logger.debug("Fetching \(T.self) with descriptor")
-        
-        do {
-            let results = try modelContext.fetch(descriptor)
-            logger.debug("Fetched \(results.count) \(T.self) items")
-            return results
-        } catch {
-            logger.error("Failed to fetch \(T.self): \(error)")
-            throw SwiftDataError.fetchFailed(error)
-        }
-    }
+    func fetch<T: PersistentModel>(_ descriptor: FetchDescriptor<T>) throws -> [T]
     
     /// Fetch all models of a given type
-    func fetchAll<T: PersistentModel>(_ type: T.Type) throws -> [T] {
-        let descriptor = FetchDescriptor<T>()
-        return try fetch(descriptor)
-    }
+    func fetchAll<T: PersistentModel>(_ type: T.Type) throws -> [T]
     
     /// Fetch a single model by predicate
     func fetchOne<T: PersistentModel>(
         _ type: T.Type,
         where predicate: Predicate<T>
-    ) throws -> T? {
-        let descriptor = FetchDescriptor<T>(
-            predicate: predicate,
-            sortBy: []
-        )
-        
-        let results = try fetch(descriptor)
-        return results.first
-    }
+    ) throws -> T?
     
     /// Insert a new model
-    func insert<T: PersistentModel>(_ model: T) throws {
-        logger.debug("Inserting \(type(of: model))")
-        
-        do {
-            modelContext.insert(model)
-            try save()
-            logger.debug("Successfully inserted \(type(of: model))")
-        } catch {
-            logger.error("Failed to insert \(type(of: model)): \(error)")
-            throw SwiftDataError.insertFailed(error)
-        }
-    }
+    func insert<T: PersistentModel>(_ model: T) throws
     
     /// Insert multiple models
-    func insertBatch<T: PersistentModel>(_ models: [T]) throws {
-        logger.debug("Batch inserting \(models.count) \(T.self) items")
-        
-        do {
-            for model in models {
-                modelContext.insert(model)
-            }
-            try save()
-            logger.debug("Successfully batch inserted \(models.count) items")
-        } catch {
-            logger.error("Failed to batch insert: \(error)")
-            throw SwiftDataError.batchInsertFailed(error)
-        }
-    }
+    func insertBatch<T: PersistentModel>(_ models: [T]) throws
     
     /// Update an existing model
-    func update<T: PersistentModel>(_ model: T) throws {
-        logger.debug("Updating \(type(of: model))")
-        
-        do {
-            // SwiftData automatically tracks changes
-            try save()
-            logger.debug("Successfully updated \(type(of: model))")
-        } catch {
-            logger.error("Failed to update \(type(of: model)): \(error)")
-            throw SwiftDataError.updateFailed(error)
-        }
-    }
+    func update<T: PersistentModel>(_ model: T) throws
     
     /// Delete a model
-    func delete<T: PersistentModel>(_ model: T) throws {
-        logger.debug("Deleting \(type(of: model))")
-        
-        do {
-            modelContext.delete(model)
-            try save()
-            logger.debug("Successfully deleted \(type(of: model))")
-        } catch {
-            logger.error("Failed to delete \(type(of: model)): \(error)")
-            throw SwiftDataError.deleteFailed(error)
-        }
-    }
+    func delete<T: PersistentModel>(_ model: T) throws
     
     /// Delete all models matching a predicate
     func deleteAll<T: PersistentModel>(
         _ type: T.Type,
-        where predicate: Predicate<T>? = nil
-    ) throws {
-        logger.debug("Deleting all \(T.self) matching predicate")
-        
-        do {
-            let descriptor = FetchDescriptor<T>(predicate: predicate)
-            let models = try fetch(descriptor)
-            
-            for model in models {
-                modelContext.delete(model)
-            }
-            
-            try save()
-            logger.debug("Successfully deleted \(models.count) \(T.self) items")
-        } catch {
-            logger.error("Failed to delete all \(T.self): \(error)")
-            throw SwiftDataError.deleteAllFailed(error)
-        }
-    }
+        where predicate: Predicate<T>?
+    ) throws
     
     /// Count models matching a predicate
     func count<T: PersistentModel>(
         _ type: T.Type,
-        where predicate: Predicate<T>? = nil
-    ) throws -> Int {
-        let descriptor = FetchDescriptor<T>(predicate: predicate)
-        let results = try fetch(descriptor)
-        return results.count
-    }
+        where predicate: Predicate<T>?
+    ) throws -> Int
     
     // MARK: - Transaction Support
     
     /// Perform operations in a transaction
-    func transaction<T>(_ block: @escaping () throws -> T) throws -> T {
-        logger.debug("Starting transaction")
-        
-        do {
-            let result = try block()
-            try save()
-            logger.debug("Transaction completed successfully")
-            return result
-        } catch {
-            logger.error("Transaction failed: \(error)")
-            // SwiftData automatically rolls back on error
-            throw SwiftDataError.transactionFailed(error)
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    private func save() throws {
-        guard modelContext.hasChanges else {
-            logger.debug("No changes to save")
-            return
-        }
-        
-        try modelContext.save()
-        logger.debug("Context saved successfully")
-    }
+    func transaction<T>(_ block: @escaping () throws -> T) throws -> T
     
     // MARK: - Maintenance
     
     /// Clear all data (useful for testing)
-    func clearAllData() throws {
-        logger.info("Clearing all SwiftData storage")
-        
-        // This would need to iterate through all model types
-        // For now, this is a placeholder
-        // In practice, you'd clear each model type individually
-        
-        logger.info("All data cleared")
-    }
+    func clearAllData() throws
     
     /// Get storage statistics
-    func getStatistics() throws -> StorageStatistics {
-        // Placeholder for storage statistics
-        // In a real implementation, you'd query model counts
-        StorageStatistics(
-            totalModels: 0,
-            storageSize: 0,
-            lastModified: Date()
-        )
-    }
+    func getStatistics() throws -> StorageStatistics
 }
-
-// MARK: - SwiftData Errors
-
-enum SwiftDataError: LocalizedError {
-    case fetchFailed(Error)
-    case insertFailed(Error)
-    case updateFailed(Error)
-    case deleteFailed(Error)
-    case deleteAllFailed(Error)
-    case batchInsertFailed(Error)
-    case transactionFailed(Error)
-    case migrationFailed(Error)
-    case containerInitializationFailed(Error)
-    
-    var errorDescription: String? {
-        switch self {
-        case .fetchFailed(let error):
-            return "Failed to fetch data: \(error.localizedDescription)"
-        case .insertFailed(let error):
-            return "Failed to insert data: \(error.localizedDescription)"
-        case .updateFailed(let error):
-            return "Failed to update data: \(error.localizedDescription)"
-        case .deleteFailed(let error):
-            return "Failed to delete data: \(error.localizedDescription)"
-        case .deleteAllFailed(let error):
-            return "Failed to delete all data: \(error.localizedDescription)"
-        case .batchInsertFailed(let error):
-            return "Failed to batch insert data: \(error.localizedDescription)"
-        case .transactionFailed(let error):
-            return "Transaction failed: \(error.localizedDescription)"
-        case .migrationFailed(let error):
-            return "Migration failed: \(error.localizedDescription)"
-        case .containerInitializationFailed(let error):
-            return "Failed to initialize container: \(error.localizedDescription)"
-        }
-    }
-}
-
-// MARK: - Storage Statistics
-
-struct StorageStatistics {
-    let totalModels: Int
-    let storageSize: Int64
-    let lastModified: Date
-    
-    var formattedSize: String {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter.string(fromByteCount: storageSize)
-    }
-}
-
-// MARK: - Testing Support
-
-#if DEBUG
-extension SwiftDataContainer {
-    /// Create an in-memory container for testing
-    static func inMemory(logger: AppLogger) throws -> SwiftDataContainer {
-        try SwiftDataContainer(
-            configuration: .inMemory,
-            logger: logger
-        )
-    }
-}
-#endif

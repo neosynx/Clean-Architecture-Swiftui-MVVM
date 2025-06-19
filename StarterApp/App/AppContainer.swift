@@ -6,206 +6,84 @@
 //
 
 import Foundation
+import FactoryKit
+
+// MARK: - Protocol
+
+/// Protocol for application dependency injection container
+/// Provides access to all core services and configuration
+protocol AppContainer {
+    
+    // MARK: - Configuration
+    
+    var configuration: AppConfiguration { get }
+    var environment: AppEnvironment { get set }
+    var useLocalData: Bool { get set }
+    
+    // MARK: - Core Services
+    
+    var networkService: NetworkService { get }
+    var analyticsService: AnalyticsService { get }
+    var loggerFactory: LoggerFactoryImpl { get }
+    var swiftDataContainer: SwiftDataContainer { get }
+    var secureStorageService: SecureStorageService { get }
+    
+    // MARK: - Store Factories
+    
+    func makeWeatherStore() -> WeatherStore
+    
+    // MARK: - Configuration Methods
+    
+    func configureAPIKey(_ apiKey: String, for service: String) async
+    func getAPIKey(for service: String) async -> String?
+    func configureForEnvironment(_ env: AppEnvironment)
+    func switchDataSource()
+}
+
+// MARK: - Implementation
 
 @Observable
-class AppContainer {
+class AppContainerImpl: AppContainer {
     // MARK: - Configuration
     let configuration: AppConfiguration
-    var environment: AppEnvironment = .production
+    var environment: AppEnvironment
     var useLocalData = false
     
-    // MARK: - Core Services (Shared across features)
-    private(set) var networkService: NetworkService
-    private(set) var analyticsService: AnalyticsService
-    private(set) var loggerFactory: LoggerFactoryImpl
-    private(set) var swiftDataContainer: SwiftDataContainer
-    private(set) var secureStorageService: SecureStorageService
+    // MARK: - Core Services (Delegated to Factory)
+    var networkService: NetworkService {
+        Container.shared.networkService()
+    }
+    
+    var analyticsService: AnalyticsService {
+        Container.shared.analyticsService()
+    }
+    
+    var loggerFactory: LoggerFactoryImpl {
+        Container.shared.loggerFactory()
+    }
+    
+    var swiftDataContainer: SwiftDataContainer {
+        Container.shared.swiftDataContainer()
+    }
+    
+    var secureStorageService: SecureStorageService {
+        Container.shared.secureStorageService()
+    }
     
     // MARK: - Initialization
     init() {
-        let env = Self.detectEnvironment()
-        
-        self.configuration = AppConfiguration()
-        self.environment = env
-        
-        // Initialize logger factory based on environment
-        let loggingEnvironment: LoggingEnvironment = {
-            switch env {
-            case .development: return .debug
-            case .staging: return .staging
-            case .production: return .production
-            }
-        }()
-        
-        let loggingConfig = LoggingConfiguration.configuration(for: loggingEnvironment)
-        let loggerFactory = LoggerFactoryImpl(
-            subsystem: Bundle.main.bundleIdentifier ?? "com.starterapp",
-            configuration: loggingConfig
-        )
-        self.loggerFactory = loggerFactory
-        
-        // Configure network service based on environment
-        let networkConfig: NetworkConfiguration = {
-            switch env {
-            case .development:
-                return .default
-            case .staging:
-                return .default
-            case .production:
-                return NetworkConfiguration(
-                    timeout: 60.0,
-                    retryAttempts: 5,
-                    retryDelay: 2.0,
-                    maxConcurrentRequests: 15,
-                    enableCaching: true,
-                    cachePolicy: .returnCacheDataElseLoad,
-                    maxResponseSize: 100 * 1024 * 1024, // 100MB for production
-                    waitsForConnectivity: true
-                )
-            }
-        }()
-        
-        self.networkService = NetworkServiceImpl(
-            configuration: configuration,
-            loggerFactory: loggerFactory,
-            networkConfig: networkConfig
-        )
-        self.analyticsService = AnalyticsServiceImpl(environment: env, loggerFactory: loggerFactory)
-        
-        // Initialize SwiftData container
-        let appLogger = loggerFactory.createAppLogger()
-        do {
-            let containerConfig: SwiftDataContainer.Configuration = env == .development ? .inMemory : .default
-            self.swiftDataContainer = try MainActor.assumeIsolated {
-                try SwiftDataContainer(
-                    configuration: containerConfig,
-                    logger: appLogger
-                )
-            }
-        } catch {
-            appLogger.error("Failed to initialize SwiftData container: \(error)")
-            // Fallback to in-memory for safety
-            do {
-                self.swiftDataContainer = try MainActor.assumeIsolated {
-                    try SwiftDataContainer(
-                        configuration: .inMemory,
-                        logger: appLogger
-                    )
-                }
-            } catch let fallbackError {
-                appLogger.error("Failed to initialize fallback in-memory container: \(fallbackError)")
-                fatalError("Unable to initialize any SwiftData container - application cannot continue")
-            }
-        }
-        
-        // Initialize secure storage
-        self.secureStorageService = SecureStorageService(logger: appLogger)
+        // Get configuration and environment from Factory
+        self.configuration = Container.shared.appConfiguration()
+        self.environment = Container.shared.appEnvironment()
         
         // Log container initialization
-        appLogger.info("AppContainer initialized for environment: \(env)")
+        let logger = Container.shared.appLogger()
+        logger.info("AppContainer initialized with Factory for environment: \(environment)")
     }
     
-    // MARK: - Store Factories (Feature-specific)
+    // MARK: - Store Factories (Simplified with Factory)
     func makeWeatherStore() -> WeatherStore {
-        let weatherRepository = makeWeatherRepository()
-        let logger = loggerFactory.createWeatherLogger()
-        return WeatherStore(weatherRepository: weatherRepository, logger: logger)
-    }
-    
-    // MARK: - Repository Factories
-    private func makeWeatherRepository() -> any WeatherRepository {
-        let logger = loggerFactory.createWeatherLogger()
-        
-        // Choose configuration based on environment
-        let configuration = makeWeatherRepositoryConfiguration()
-        
-        // Create data sources using proper dependency injection
-        let cacheDataSource = makeCacheDataSource(configuration: configuration, logger: logger)
-        let persistenceDataSource = makePersistenceDataSource(logger: logger)
-        let remoteDataSource = makeRemoteDataSource(logger: logger)
-        _ = makeHealthService(
-            cache: cacheDataSource,
-            persistence: persistenceDataSource,
-            remote: remoteDataSource,
-            configuration: configuration,
-            logger: logger
-        )
-        
-        // Create repository with improved configuration but old implementation for compatibility
-        return WeatherRepositoryImpl(
-            swiftDataContainer: swiftDataContainer,
-            remoteService: createWeatherRemoteService(),
-            mapper: WeatherProtocolMapper(),
-            strategyType: configuration.strategy.type,
-            logger: logger,
-            secureStorage: secureStorageService
-        )
-    }
-    
-    private func makeWeatherRepositoryConfiguration() -> WeatherRepositoryConfiguration {
-        switch environment {
-        case .development:
-            return .development
-        case .staging:
-            return .default
-        case .production:
-            return .production
-        }
-    }
-    
-    private func makeCacheDataSource(
-        configuration: WeatherRepositoryConfiguration,
-        logger: AppLogger
-    ) -> any WeatherCacheDataSource {
-        return WeatherCacheDataSourceImpl(
-            countLimit: configuration.cache.countLimit,
-            totalCostLimit: configuration.cache.totalCostLimit,
-            expirationInterval: configuration.cache.expirationInterval,
-            logger: logger
-        )
-    }
-    
-    private func makePersistenceDataSource(logger: AppLogger) -> any WeatherPersistenceDataSource {
-        return WeatherPersistenceDataSourceImpl(
-            persistenceService: swiftDataContainer,
-            mapper: WeatherProtocolMapper(),
-            logger: logger
-        )
-    }
-    
-    private func makeRemoteDataSource(logger: AppLogger) -> (any WeatherRemoteDataSource)? {
-
-        return WeatherRemoteDataSourceImpl(
-            remoteService: createWeatherRemoteService(),
-            mapper: WeatherProtocolMapper(),
-            logger: logger
-        )
-    }
-    
-    private func makeHealthService(
-        cache: any WeatherCacheDataSource,
-        persistence: any WeatherPersistenceDataSource,
-        remote: (any WeatherRemoteDataSource)?,
-        configuration: WeatherRepositoryConfiguration,
-        logger: AppLogger
-    ) -> WeatherRepositoryHealthService {
-        return WeatherRepositoryHealthServiceImpl(
-            cacheDataSource: cache,
-            persistenceDataSource: persistence,
-            remoteDataSource: remote,
-            configuration: configuration,
-            logger: logger
-        )
-    }
-    
-    private func createWeatherRemoteService() -> WeatherRemoteService {
- 
-        let logger = loggerFactory.createWeatherLogger()
-        return WeatherRemoteService(
-            networkService: networkService,
-            configuration: configuration,
-            logger: logger
-        )
+        return Container.shared.weatherStore()
     }
     
     // MARK: - Configuration Methods
@@ -245,31 +123,8 @@ class AppContainer {
         logger.info("Switched to \(useLocalData ? "local" : "remote") data source")
     }
     
-    // MARK: - Environment Detection
-    private static func detectEnvironment() -> AppEnvironment {
-        // Check for environment variable override first
-        if let envOverride = ProcessInfo.processInfo.environment["STARTERAPP_ENVIRONMENT"] {
-            switch envOverride.lowercased() {
-            case "development", "dev", "debug":
-                return .development
-            case "staging", "stage":
-                return .staging
-            case "production", "prod":
-                return .production
-            default:
-                break
-            }
-        }
-        
-        // Fallback to build configuration detection
-        #if DEBUG
-        return .development
-        #elseif STAGING
-        return .staging
-        #else
-        return .production
-        #endif
-    }
+    // MARK: - Environment Detection (Moved to Factory)
+    // Environment detection is now handled in Container+Core.swift
 }
 
 // MARK: - App Environment

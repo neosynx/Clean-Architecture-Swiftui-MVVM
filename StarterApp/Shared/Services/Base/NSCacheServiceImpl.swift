@@ -7,9 +7,52 @@
 
 import Foundation
 
+// MARK: - Cache Service Protocol
+
+/// Generic protocol for cache services
+/// Provides a common interface for different cache implementations
+protocol CacheServiceProtocol<Key, Value> {
+    associatedtype Key: Hashable
+    associatedtype Value
+    
+    /// Get cached value for key
+    /// - Parameter key: The cache key
+    /// - Returns: The cached value if exists and not expired, nil otherwise
+    func get(for key: Key) async -> Value?
+    
+    /// Set value in cache for key
+    /// - Parameters:
+    ///   - value: The value to cache
+    ///   - key: The cache key
+    func set(_ value: Value, for key: Key)
+    
+    /// Remove cached value for key
+    /// - Parameter key: The cache key
+    func remove(for key: Key)
+    
+    /// Clear all cached values
+    func clear()
+    
+    /// Check if cache entry is expired
+    /// - Parameter key: The cache key
+    /// - Returns: true if expired or not found, false if valid
+    func isExpired(for key: Key) -> Bool
+    
+    /// Get all cached keys
+    /// - Returns: Set of all currently cached keys
+    func getAllKeys() -> Set<Key>
+    
+    /// Get cache statistics
+    /// - Returns: Statistics about the cache state
+    func getStatistics() -> SimpleCacheStatistics
+    
+    /// Clean expired entries from cache
+    func cleanExpiredEntries()
+}
+
 /// NSCache-based implementation for optimal memory management
 /// Apple's recommended solution for in-memory caching with automatic eviction
-final class NSCacheServiceImpl<Key: Hashable, Value: AnyObject>: NSObject, @unchecked Sendable {
+final class NSCacheServiceImpl<Key: Hashable, Value: AnyObject>: NSObject, CacheServiceProtocol, @unchecked Sendable {
     
     // MARK: - Properties
     
@@ -272,3 +315,159 @@ final class DomainModelCache<Key: Hashable, Model> {
         cache.getStatistics()
     }
 }
+
+// MARK: - Mock Cache Implementation for Testing
+
+#if DEBUG
+/// Mock cache implementation for testing purposes
+final class MockCacheService<Key: Hashable, Value>: CacheServiceProtocol, @unchecked Sendable {
+    
+    private var storage: [Key: CacheItem] = [:]
+    private let queue = DispatchQueue(label: "mock.cache", attributes: .concurrent)
+    private let expirationInterval: TimeInterval
+    
+    private struct CacheItem {
+        let value: Value
+        let timestamp: Date
+        let expirationDate: Date
+        
+        var isExpired: Bool {
+            Date() > expirationDate
+        }
+    }
+    
+    private(set) var getCallCount = 0
+    private(set) var setCallCount = 0
+    private(set) var removeCallCount = 0
+    private(set) var clearCallCount = 0
+    
+    init(expirationInterval: TimeInterval = 3600) {
+        self.expirationInterval = expirationInterval
+    }
+    
+    func get(for key: Key) async -> Value? {
+        return queue.sync {
+            getCallCount += 1
+            
+            guard let item = storage[key] else {
+                return nil
+            }
+            
+            if item.isExpired {
+                storage.removeValue(forKey: key)
+                return nil
+            }
+            
+            return item.value
+        }
+    }
+    
+    func set(_ value: Value, for key: Key) {
+        queue.async(flags: .barrier) {
+            self.setCallCount += 1
+            
+            let item = CacheItem(
+                value: value,
+                timestamp: Date(),
+                expirationDate: Date().addingTimeInterval(self.expirationInterval)
+            )
+            self.storage[key] = item
+        }
+    }
+    
+    func remove(for key: Key) {
+        queue.async(flags: .barrier) {
+            self.removeCallCount += 1
+            self.storage.removeValue(forKey: key)
+        }
+    }
+    
+    func clear() {
+        queue.async(flags: .barrier) {
+            self.clearCallCount += 1
+            self.storage.removeAll()
+        }
+    }
+    
+    func isExpired(for key: Key) -> Bool {
+        return queue.sync {
+            guard let item = storage[key] else {
+                return true
+            }
+            return item.isExpired
+        }
+    }
+    
+    func getAllKeys() -> Set<Key> {
+        return queue.sync {
+            Set(storage.keys)
+        }
+    }
+    
+    func getStatistics() -> SimpleCacheStatistics {
+        return queue.sync {
+            let validCount = storage.values.filter { !$0.isExpired }.count
+            let expiredCount = storage.values.filter { $0.isExpired }.count
+            
+            return SimpleCacheStatistics(
+                entryCount: validCount,
+                expiredCount: expiredCount,
+                totalCount: storage.count,
+                countLimit: 100,
+                totalCostLimit: 50 * 1024 * 1024
+            )
+        }
+    }
+    
+    func cleanExpiredEntries() {
+        queue.async(flags: .barrier) {
+            let expiredKeys = self.storage.compactMap { key, item in
+                item.isExpired ? key : nil
+            }
+            
+            for key in expiredKeys {
+                self.storage.removeValue(forKey: key)
+            }
+        }
+    }
+    
+    // MARK: - Test Helpers
+    
+    /// Reset all mock state
+    func reset() {
+        queue.async(flags: .barrier) {
+            self.storage.removeAll()
+            self.getCallCount = 0
+            self.setCallCount = 0
+            self.removeCallCount = 0
+            self.clearCallCount = 0
+        }
+    }
+    
+    /// Check if key exists in cache (ignoring expiration)
+    func hasKey(_ key: Key) -> Bool {
+        return queue.sync {
+            storage[key] != nil
+        }
+    }
+    
+    /// Get value without checking expiration (for testing)
+    func getRawValue(for key: Key) -> Value? {
+        return queue.sync {
+            storage[key]?.value
+        }
+    }
+    
+    /// Set value with custom expiration date
+    func setValue(_ value: Value, for key: Key, expiresAt date: Date) {
+        queue.async(flags: .barrier) {
+            let item = CacheItem(
+                value: value,
+                timestamp: Date(),
+                expirationDate: date
+            )
+            self.storage[key] = item
+        }
+    }
+}
+#endif
